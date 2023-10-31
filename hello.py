@@ -41,7 +41,7 @@ if uploaded_file is not None:
                 try:
                     reference_columns = yaml.safe_load(file)
                 except Exception as e:
-                    st.error(f"Error loading reference columns: {str(e}")
+                    st.error(f"Error loading reference columns: {str(e)}")
                     reference_columns = []
 
             if reference_columns:
