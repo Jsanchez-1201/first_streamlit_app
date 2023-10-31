@@ -64,7 +64,7 @@ if uploaded_file is not None:
                 change_columns_input = st.text_input("Ingrese una lista de columnas para modificar (e.g., '0, 5, 7') o 'none' para omitir:")
 
                 if change_columns_input.lower() != 'none':
-                    change_columns_list = [int(col.strip()) for col in change_columns_input.split(',')]
+                    change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
                     for column_index in change_columns_list:
                         if 0 <= column_index and column_index < len(matched_columns):
                             selected_column = list(matched_columns.keys())[column_index]
