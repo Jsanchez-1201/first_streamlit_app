@@ -1,8 +1,3 @@
-
-Claro, aquí tienes un ejemplo de código en Python utilizando Streamlit para crear una aplicación que permite cargar, explorar y realizar algunas operaciones básicas de limpieza en un conjunto de datos. Este ejemplo utiliza Pandas para la manipulación de datos:
-
-python
-Copy code
 import streamlit as st
 import pandas as pd
 
