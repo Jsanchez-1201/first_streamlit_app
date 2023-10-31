@@ -53,7 +53,7 @@ if uploaded_file is not None:
 
                 # Allow the user to specify columns for modification
                 st.subheader('Column Modification')
-                change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:")
+                change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:", key='change_columns_input')
 
                 if change_columns_input.lower() != 'none':
                     change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
@@ -63,7 +63,7 @@ if uploaded_file is not None:
                             st.write(f"Mapping options for column {column_index}: '{selected_column}':")
                             for j, (match, score) in enumerate(matched_columns[selected_column]):
                                 st.write(f"  {j}. Map to '{match}' (Score: {score})")  # Display the full match
-                            match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:")
+                            match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:", key=f'match_choice_{column_index}')
                             if match_choice.lower() != 'skip' and match_choice.isdigit():
                                 match_index = int(match_choice)
                                 if 0 <= match_index < len(matched_columns[selected_column]):
@@ -79,4 +79,3 @@ if uploaded_file is not None:
 
                 st.subheader('Updated DataFrame:')
                 st.write(df)
-           
