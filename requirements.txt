@@ -1,5 +1,5 @@
 # requirements.txt
 streamlit
 pandas
-fuzzywuzzy
+fuzzywuzzy==0.18.0
 pyyaml
