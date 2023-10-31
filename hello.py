@@ -1,5 +1,3 @@
-pip install streamlit pandas fuzzywuzzy pyyaml
-
 import streamlit as st
 import pandas as pd
 import fuzzywuzzy.process as fuzz
