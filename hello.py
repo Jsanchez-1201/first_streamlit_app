@@ -3,6 +3,7 @@ import pandas as pd
 import fuzzywuzzy.process as fuzz
 import re
 import yaml
+import streamlit_scrollable_textbox as stx
 
 # Function to find and match columns
 def match_columns(df, reference_columns):
@@ -49,7 +50,7 @@ if uploaded_file is not None:
 
                 st.subheader('Mapped Columns:')
                 for column_index, (column, mapping) in enumerate(matched_columns.items()):
-                    st.write(f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'")
+                    stx.scrollableTextbox(st.write(f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'"), height = 300)
                 
                 # Allow the user to specify columns for modification
                 st.subheader('Column Modification')
