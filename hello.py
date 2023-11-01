@@ -50,7 +50,7 @@ if uploaded_file is not None:
 
                 st.subheader('Mapped Columns:')
                 for column_index, (column, mapping) in enumerate(matched_columns.items()):
-                    results = pd.dataframe(f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'")
+                    results = pd.DataFrame(f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'")
                 st.write(results)
                 # Allow the user to specify columns for modification
                 st.subheader('Column Modification')
