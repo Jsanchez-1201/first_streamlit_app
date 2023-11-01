@@ -79,6 +79,8 @@ if uploaded_file is not None:
                 # Remove columns that are not in reference_columns in the updated DataFrame
                 columns_to_remove = [col for col in df.columns if col not in reference_columns]
                 df.drop(columns=columns_to_remove, inplace=True)
-
+                # Check if "Last Name" doesn't exist and create it
+                if "Last Name" not in df.columns:
+                    df["Last Name"] = ""
                 st.subheader('Updated DataFrame:')
                 st.write(df)
