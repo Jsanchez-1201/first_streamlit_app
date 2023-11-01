@@ -3,3 +3,4 @@ pandas
 fuzzywuzzy==0.18.0
 pyyaml
 openpyxl
+streamlit-scrollable-textbox
