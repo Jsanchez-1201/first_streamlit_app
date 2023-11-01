@@ -63,23 +63,23 @@ if uploaded_file is not None:
     st.subheader('Column Modification')
     change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 1, 2') or 'none' to skip:", key='change_columns_input')
 
-        if change_columns_input.lower() != 'none':
-            change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
-            for column_index in change_columns_list:
-                if 0 <= column_index < len(matched_columns):
-                    selected_column = list(matched_columns.keys())[column_index]
-                        st.write(f"Mapping options for column {column_index}: '{selected_column}':")
-                        for j, (match, score) in enumerate(matched_columns[selected_column]):
-                            st.write(f"  {j}. Map to '{match}' (Score: {score})")  # Display all mapping options
-                        match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:", key=f'match_choice_{column_index}')
-                        if match_choice.lower() != 'skip' and match_choice.isdigit():
-                            match_index = int(match_choice)
-                            if 0 <= match_index < len(matched_columns[selected_column]):
-                                chosen_mapping = matched_columns[selected_column][match_index][0]
-                                df.rename(columns={selected_column: chosen_mapping}, inplace=True)
-                                st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
-                        else:
-                            st.write("No changes have been made to the column.")
+    if change_columns_input.lower() != 'none':
+        change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
+        for column_index in change_columns_list:
+            if 0 <= column_index < len(matched_columns):
+                selected_column = list(matched_columns.keys())[column_index]
+                    st.write(f"Mapping options for column {column_index}: '{selected_column}':")
+                    for j, (match, score) in enumerate(matched_columns[selected_column]):
+                        st.write(f"  {j}. Map to '{match}' (Score: {score})")  # Display all mapping options
+                    match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:", key=f'match_choice_{column_index}')
+                    if match_choice.lower() != 'skip' and match_choice.isdigit():
+                        match_index = int(match_choice)
+                        if 0 <= match_index < len(matched_columns[selected_column]):
+                            chosen_mapping = matched_columns[selected_column][match_index][0]
+                            df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                            st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
+                    else:
+                        st.write("No changes have been made to the column.")
 
     # Remove columns that are not in reference_columns in the updated DataFrame
     columns_to_remove = [col for col in df.columns if col not in reference_columns]
