@@ -53,9 +53,9 @@ if uploaded_file is not None:
         matched_columns = match_columns(df, reference_columns)
 
     st.subheader('Mapped Columns:')
-        mapped_columns_text = ""
-        for column_index, (column, mapping) in enumerate(matched_columns.items()):
-            mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
+    mapped_columns_text = ""
+    for column_index, (column, mapping) in enumerate(matched_columns.items()):
+        mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
                 
         st.text(mapped_columns_text)
 
