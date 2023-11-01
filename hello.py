@@ -52,12 +52,12 @@ if uploaded_file is not None:
     if reference_columns:
         matched_columns = match_columns(df, reference_columns)
 
-                st.subheader('Mapped Columns:')
-                mapped_columns_text = ""
-                for column_index, (column, mapping) in enumerate(matched_columns.items()):
-                    mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
+    st.subheader('Mapped Columns:')
+        mapped_columns_text = ""
+        for column_index, (column, mapping) in enumerate(matched_columns.items()):
+            mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
                 
-                st.text(mapped_columns_text)
+        st.text(mapped_columns_text)
 
                 # Allow the user to specify columns for modification
                 st.subheader('Column Modification')
