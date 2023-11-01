@@ -16,12 +16,12 @@ def match_columns(df, reference_columns):
             matched_columns[column] = matches
 
     return matched_columns
- with open('standard_columns.yml', 'r') as yaml_file:
-        try:
-            reference_columns = yaml.safe_load(yaml_file)
-        except Exception as e:
-            print(f"Error loading reference columns: {str(e)}")
-            reference_columns = []
+with open('standard_columns.yml', 'r') as yaml_file:
+    try:
+        reference_columns = yaml.safe_load(yaml_file)
+    except Exception as e:
+        print(f"Error loading reference columns: {str(e)}")
+        reference_columns = []
 # App setup
 st.title('Column Mapping and Data Cleaning Application')
 st.write('Upload an Excel file and map the columns to the reference columns. Then, allow the user to make modifications to the columns.')
