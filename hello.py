@@ -50,7 +50,7 @@ if uploaded_file is not None:
 
                 st.subheader('Mapped Columns:')
                 for column_index, (column, mapping) in enumerate(matched_columns.items()):
-                    stx.scrollableTextbox(st.write(f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'"), height = 300)
+                    stx.scrollableTextbox(f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'", height = 300)
                 
                 # Allow the user to specify columns for modification
                 st.subheader('Column Modification')
