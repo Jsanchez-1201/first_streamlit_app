@@ -49,8 +49,8 @@ if uploaded_file is not None:
                     #st.error(f"Error loading reference columns: {str(e)}")
                     #reference_columns = []
 
-            if reference_columns:
-                matched_columns = match_columns(df, reference_columns)
+    if reference_columns:
+        matched_columns = match_columns(df, reference_columns)
 
                 st.subheader('Mapped Columns:')
                 mapped_columns_text = ""
