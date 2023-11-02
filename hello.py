@@ -1,6 +1,6 @@
 import streamlit as st
 from pages import page1
-
+import pandas as pd
 st.set_page_config(page_title="Multi-Page App")
 
 st.title("Welcome to the Multi-Page Streamlit App")
