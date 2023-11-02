@@ -17,8 +17,11 @@ def match_columns(df, reference_columns):
     return matched_columns
 
 # Page 1: Automated and Manual Column Mapping
-def page_1(df, reference_columns):
+def page_1():
     st.title("Page 1: Automated and Manual Column Mapping")
+
+    df = st.session_state.df
+    reference_columns = st.session_state.reference_columns
     
     if reference_columns:
         matched_columns = match_columns(df, reference_columns)
