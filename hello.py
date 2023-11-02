@@ -35,6 +35,3 @@ if not st.session_state.page_1_started:
         st.session_state.reference_columns = reference_columns
         st.title("Page 1: Automated and Manual Column Mapping")
         page1.page_1()
-
-if st.session_state.page_1_started:
-    st.title("Welcome to the Multi-Page Streamlit App")  # Avoid duplicate title
