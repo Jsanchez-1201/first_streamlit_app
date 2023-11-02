@@ -33,8 +33,8 @@ if not st.session_state.page_1_started:
         st.session_state.df = df
         st.session_state.reference_columns = reference_columns
         st.session_state.page_1_started = True
-      
+        st.title("Page 1: Automated and Manual Column Mapping")
 
 # If Page 1 is started, execute Page 1
 if st.session_state.page_1_started:
-    page1.page_1(df=st.session_state.df, reference_columns=st.session_state.reference_columns)
+    page1.page_1()
