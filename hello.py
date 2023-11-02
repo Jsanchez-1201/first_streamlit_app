@@ -30,5 +30,4 @@ st.session_state.reference_columns = reference_columns
 
 # Redirect to Page 1
 if st.session_state.df is not None and st.session_state.reference_columns:
-    st.title("Page 1: Automated and Manual Column Mapping")
     page1.page_1()
