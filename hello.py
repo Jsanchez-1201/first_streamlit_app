@@ -1,17 +1,27 @@
 import streamlit as st
+from pages import page1
 
-st.set_page_config(page_title="Welcome")
+st.set_page_config(page_title="Multi-Page App")
 
-st.title("Marketing data cleaning app")
+st.title("Welcome to the Multi-Page Streamlit App")
 
-# Create a navigation menu
-page = st.sidebar.selectbox("Select page 1 to start", ["Page 1", "Page 2"])
+# Upload DataFrame and YAML file in the main script
+uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"])
+reference_file = st.file_uploader("Upload YAML file with reference columns (optional)", type=["yml", "yaml"])
 
-if page == "Page 1":
-    st.title("Page 1: Upload DataFrame and Initial Mapping")
-    import pages.page1
-    pages.page1.page_1()
-elif page == "Page 2":
-    st.title("Page 2: Manual Column Modification and Updated DataFrame")
-    import pages.page2
-    pages.page2.page_2()
+# Initialize DataFrame and reference_columns
+df = None
+reference_columns = []
+
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
+    if reference_file is not None:
+        with reference_file as file:
+            try:
+                reference_columns = yaml.safe_load(file)
+            except Exception as e:
+                st.error(f"Error loading reference columns: {str(e)}")
+
+# Pass data to Page 1
+if df is not None:
+    page1.page_1(df, reference_columns)
