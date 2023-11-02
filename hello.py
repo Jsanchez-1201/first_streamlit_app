@@ -24,11 +24,11 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
 
-if "page_1_started" not in st.session_state:
+if not "page_1_started" in st.session_state:
     st.session_state.page_1_started = False
 
 if not st.session_state.page_1_started:
-    # Add a button to proceed with default YAML
+    st.button("Continue with Default YAML")  # Button to proceed with default YAML
     if st.button("Continue with Default YAML"):
         st.session_state.page_1_started = True
         st.session_state.df = df
