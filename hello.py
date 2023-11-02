@@ -28,16 +28,13 @@ if uploaded_file is not None:
 st.session_state.df = df
 st.session_state.reference_columns = reference_columns
 
-# Redirect to Page 1
-if st.session_state.df is not None and st.session_state.reference_columns:
-    page1.page_1()
-
-# Add a button to proceed with default YAML
+# If the user clicks the button to use default YAML, load the standard_columns.yml
 if st.button("Continue with Default YAML"):
     with open('standard_columns.yml', 'r') as default_yaml:
         st.session_state.reference_columns = yaml.safe_load(default_yaml)
-    st.session_state.df = df
-    st.session_state.reference_columns = reference_columns
+
+# Redirect to Page 1 only if data exists
+if st.session_state.df is not None:
     page1.page_1()
 
 
