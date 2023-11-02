@@ -24,8 +24,13 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
 
-# Store data in a global variable
-global_data = {"df": df, "reference_columns": reference_columns}
+# Use Streamlit's session state to persist data
+if "data" not in st.session_state:
+    st.session_state.data = {"df": None, "reference_columns": []}
+
+# Store data in session state
+st.session_state.data["df"] = df
+st.session_state.data["reference_columns"] = reference_columns
 
 # Check if Page 1 is started
 if not "page_1_started" in st.session_state:
