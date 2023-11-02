@@ -64,4 +64,5 @@ def page_1():
         st.subheader('Updated DataFrame:')
         st.write(df)
 
-page_1()
+    page_1()
+
