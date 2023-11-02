@@ -18,7 +18,7 @@ def match_columns(df, reference_columns):
 
 # Page 1: Automated and Manual Column Mapping
 def page_1():
-    st.write("This is Page 1: Automated and Manual Column Mapping")
+    st.title("Page 1: Automated and Manual Column Mapping")
 
     # Access data from st.session_state
     df = st.session_state.df
