@@ -24,6 +24,14 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
 
+# Use st.cache to persist data between pages
+cached_data = st.cache(allow_output_mutation=True)(lambda: {"df": None, "reference_columns": []})
+data = cached_data()
+
+# Store data
+data["df"] = df
+data["reference_columns"] = reference_columns
+
 # Check if Page 1 is started
 if not "page_1_started" in st.session_state:
     st.session_state.page_1_started = False
@@ -35,4 +43,4 @@ if not st.session_state.page_1_started:
 
 # If Page 1 is started, execute Page 1
 if st.session_state.page_1_started:
-    page1.page_1(df, reference_columns)
+    page1.page_1(data["df"], data["reference_columns"])
