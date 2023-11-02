@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from pages import page1
 
 st.set_page_config(page_title="Multi-Page App")
