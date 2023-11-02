@@ -63,8 +63,13 @@ def page_1():
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
                         st.write("No changes have been made to the column")
+        
+        # Remove columns that are not in reference_columns in the updated DataFrame
+        columns_to_remove = [col for col in df.columns if col not in reference_columns]
+        df.drop(columns=columns_to_remove, inplace=True)
 
         st.subheader('Updated DataFrame:')
         st.write(df)
 
+if __name__ == "__main__":
     page_1()
