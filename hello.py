@@ -53,7 +53,7 @@ def page_1():
             st.write("Or you can upload a different Excel file and YAML file on this page.")
 
     # Page 2: Column Mapping and Data Cleaning
-    def page_2():
+def page_2():
     st.title('Page 2: Column Mapping and Data Cleaning')
     
     # Load DataFrame and reference columns
