@@ -15,6 +15,10 @@ reference_file = st.file_uploader("Upload YAML file with reference columns (opti
 df = None
 reference_columns = []
 
+# Pre-load the standard_columns.yml
+with open('standard_columns.yml', 'r') as default_yaml:
+    default_reference_columns = yaml.safe_load(default_yaml)
+
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     if reference_file is not None:
@@ -28,15 +32,15 @@ if uploaded_file is not None:
 st.session_state.df = df
 st.session_state.reference_columns = reference_columns
 
-# If the user clicks the button to use default YAML, load the standard_columns.yml
-if st.button("Continue with Default YAML"):
-    with open('standard_columns.yml', 'r') as default_yaml:
-        st.session_state.reference_columns = yaml.safe_load(default_yaml)
-
-# Redirect to Page 1 only if data exists
-if st.session_state.df is not None:
+# Redirect to Page 1
+if st.session_state.df is not None and st.session_state.reference_columns:
     page1.page_1()
 
+#Add a button to continue with the default yaml
+if st.button("Continue with Default YAML"):
+    st.session_state.df = df
+    st.session_state.reference_columns = default_reference_columns  # Assign the pre-loaded default YAML
+    page1.page_1()
 
 
 
