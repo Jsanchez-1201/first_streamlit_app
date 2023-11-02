@@ -11,23 +11,22 @@ def page_1():
     df = st.session_state.df
     reference_columns = st.session_state.reference_columns
 
+    last_name_pattern = re.compile(r'\b[lL][aA][sS][tT]\s?[nN][aA][mM][eE]\b|\bLST\s?NM\b')
+
+    # Function to find and match columns
+    def match_columns(df, reference_columns):
+        matched_columns = {}  # Initialize the matched_columns dictionary
+        input_columns = df.columns.tolist()
+
+        for column in input_columns:
+            matches = fuzz.extractBests(column, reference_columns)
+            if matches:
+                matched_columns[column] = matches
+
+        return matched_columns
+
     if df is not None:
-        last_name_pattern = re.compile(r'\b[lL][aA][sS][tT]\s?[nN][aA][mM][eE]\b|\bLST\s?NM\b')
-
-        # Function to find and match columns
-        def match_columns(df, reference_columns):
-            matched_columns = {}  # Initialize the matched_columns dictionary
-            input_columns = df.columns.tolist()
-
-            for column in input_columns:
-                matches = fuzz.extractBests(column, reference_columns)
-                if matches:
-                    matched_columns[column] = matches
-
-            return matched_columns
-
-        if reference_columns:
-            matched_columns = match_columns(df, reference_columns)
+        matched_columns = match_columns(df, reference_columns)
 
         st.subheader('Mapped Columns:')
         mapped_columns_text = ""
@@ -38,6 +37,10 @@ def page_1():
         # Initial automated mapping
         for column_index, (column, mapping) in enumerate(matched_columns.items()):
             df.rename(columns={column: mapping[0][0]}, inplace=True)
+
+        # Check if "Last Name" doesn't exist and create it
+        if "Last Name" not in df.columns:
+            df["Last Name"] = ""
 
         # Allow the user to specify columns for modification
         st.subheader('Column Modification')
@@ -59,11 +62,7 @@ def page_1():
                             df.rename(columns={selected_column: chosen_mapping}, inplace=True)
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
-                        st.write("No changes have been made to the column.")
-
-        # Check if "Last Name" doesn't exist and create it
-        if "Last Name" not in df.columns:
-            df["Last Name"] = ""
+                        st.write("No changes have been made to the column")
 
         st.subheader('Updated DataFrame:')
         st.write(df)
