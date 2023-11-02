@@ -52,31 +52,31 @@ def page_1():
 
             st.write("Or you can upload a different Excel file and YAML file on this page.")
 
-    # Page 2: Column Mapping and Data Cleaning
+# Page 2: Column Mapping and Data Cleaning
 def page_2():
     st.title('Page 2: Column Mapping and Data Cleaning')
-    
+
     # Load DataFrame and reference columns
     if 'df' not in st.session_state:
         st.write("Please upload your DataFrame and YAML file on Page 1.")
         return
-    
+
     df = st.session_state.df
     reference_columns = st.session_state.reference_columns
-    
+
     if reference_columns:
         matched_columns = match_columns(df, reference_columns)
-    
+
         mapped_columns_text = ""
         for column_index, (column, mapping) in enumerate(matched_columns.items()):
             mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
-    
+
         st.text(mapped_columns_text)
-    
+
         # Allow the user to specify columns for modification
         st.subheader('Column Modification')
         change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 1, 2') or 'none' to skip:", key='change_columns_input')
-    
+
         if change_columns_input.lower() != 'none':
             change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
             for column_index in change_columns_list:
@@ -94,7 +94,7 @@ def page_2():
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
                         st.write("No changes have been made to the column.")
-    
+
         # Remove columns that are not in reference_columns in the updated DataFrame
         columns_to_remove = [col for col in df.columns if col not in reference_columns]
         df.drop(columns=columns_to_remove, inplace=True)
