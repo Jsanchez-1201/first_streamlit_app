@@ -56,8 +56,10 @@ if uploaded_file is not None:
         if reference_columns:
             matched_columns = match_columns(df, reference_columns)
 
-            st.subheader('Mapped Columns:')
-            mapped_columns_text = "\n".join([f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'" for column_index, (column, mapping) in enumerate(matched_columns.items()])
+            mapped_columns_text = ""
+            for column_index, (column, mapping) in enumerate(matched_columns.items()):
+                mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
+
             st.text(mapped_columns_text)
 
             # Allow the user to specify columns for modification
@@ -83,7 +85,7 @@ if uploaded_file is not None:
                             st.write("No changes have been made to the column.")
 
             # Remove columns that are not in reference_columns in the updated DataFrame
-            columns_to remove = [col for col in df.columns if col not in reference_columns]
+            columns_to_remove = [col for col in df.columns if col not in reference_columns]
             df.drop(columns=columns_to_remove, inplace=True)
             # Check if "Last Name" doesn't exist and create it
             if "Last Name" not in df.columns:
