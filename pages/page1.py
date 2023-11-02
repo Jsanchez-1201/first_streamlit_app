@@ -35,6 +35,10 @@ def page_1():
             mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
         st.text(mapped_columns_text)
 
+        # Initial automated mapping
+        for column_index, (column, mapping) in enumerate(matched_columns.items()):
+            df.rename(columns={column: mapping[0][0]}, inplace=True)
+
         # Allow the user to specify columns for modification
         st.subheader('Column Modification')
         change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 1, 2') or 'none' to skip:")
@@ -65,4 +69,3 @@ def page_1():
         st.write(df)
 
     page_1()
-
