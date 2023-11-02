@@ -28,8 +28,7 @@ if not "page_1_started" in st.session_state:
     st.session_state.page_1_started = False
 
 if not st.session_state.page_1_started:
-    st.button("Continue with Default YAML")  # Button to proceed with default YAML
-    if st.button("Continue with Default YAML"):
+    if st.button("Continue with Default YAML"):  # Button to proceed with default YAML
         st.session_state.page_1_started = True
         st.session_state.df = df
         st.session_state.reference_columns = reference_columns
