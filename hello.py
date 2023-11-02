@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import yaml
 from pages import page1
 
 st.set_page_config(page_title="Multi-Page App")
@@ -23,11 +24,7 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
 
-# Check if we have a DataFrame and reference columns
-if df is not None:
-    st.session_state.df = df
-    st.session_state.reference_columns = reference_columns
-
-    # Redirect to Page 1
+# Redirect to Page 1 only if the DataFrame and reference columns are ready
+if df is not None and (len(df) > 0) and reference_columns:
     st.title("Page 1: Automated and Manual Column Mapping")
-    page1.page_1()
+    page1.page_1(df, reference_columns)
