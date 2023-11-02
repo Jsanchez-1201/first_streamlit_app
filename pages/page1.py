@@ -20,6 +20,7 @@ def match_columns(df, reference_columns):
 def page_1():
     st.title("Page 1: Automated and Manual Column Mapping")
 
+    # Access data from st.session_state
     df = st.session_state.df
     reference_columns = st.session_state.reference_columns
     
@@ -57,3 +58,4 @@ def page_1():
 
     st.subheader('Updated DataFrame:')
     st.write(df)
+
