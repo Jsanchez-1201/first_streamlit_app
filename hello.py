@@ -5,7 +5,7 @@ from pages import page1
 
 st.set_page_config(page_title="Multi-Page App")
 
-st.title("Welcome to the Marketing Data Cleaning App")
+st.title("Welcome to the Multi-Page Streamlit App")
 
 # Unique keys for file upload widgets
 uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"], key="excel_uploader")
@@ -24,12 +24,17 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
 
+# Check if Page 1 is started
 if not "page_1_started" in st.session_state:
     st.session_state.page_1_started = False
 
 if not st.session_state.page_1_started:
-    if st.button("Continue with Default YAML"):  # Button to proceed with default YAML
-        st.session_state.page_1_started = True
+    if st.button("Continue with Default YAML"):
         st.session_state.df = df
         st.session_state.reference_columns = reference_columns
-        page1.page_1()
+        st.session_state.page_1_started = True
+      
+
+# If Page 1 is started, execute Page 1
+if st.session_state.page_1_started:
+    page1.page_1(df=st.session_state.df, reference_columns=st.session_state.reference_columns)
