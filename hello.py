@@ -34,6 +34,8 @@ if st.session_state.df is not None and st.session_state.reference_columns:
 
 # Add a button to proceed with default YAML
 if st.button("Continue with Default YAML"):
+    with open('standard_columns.yml', 'r') as default_yaml:
+        st.session_state.reference_columns = yaml.safe_load(default_yaml)
     st.session_state.df = df
     st.session_state.reference_columns = reference_columns
     page1.page_1()
