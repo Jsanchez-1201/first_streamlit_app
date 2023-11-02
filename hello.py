@@ -24,23 +24,11 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
 
-# Use Streamlit's session state to persist data
-if "data" not in st.session_state:
-    st.session_state.data = {"df": None, "reference_columns": []}
+# Pass data to Page 1 using st.session_state
+st.session_state.df = df
+st.session_state.reference_columns = reference_columns
 
-# Store data in session state
-st.session_state.data["df"] = df
-st.session_state.data["reference_columns"] = reference_columns
-
-# Check if Page 1 is started
-if not "page_1_started" in st.session_state:
-    st.session_state.page_1_started = False
-
-if not st.session_state.page_1_started:
-    if st.button("Continue with Default YAML"):
-        st.session_state.page_1_started = True
-        st.title("Page 1: Automated and Manual Column Mapping")
-
-# If Page 1 is started, execute Page 1
-if st.session_state.page_1_started:
+# Redirect to Page 1
+if st.session_state.df is not None and st.session_state.reference_columns:
+    st.title("Page 1: Automated and Manual Column Mapping")
     page1.page_1()
