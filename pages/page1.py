@@ -55,9 +55,9 @@ def page_1():
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
                         st.write("No changes have been made to the column.")
-    # Check if "Last Name" doesn't exist and create it
-    if "Last Name" not in df.columns:
-        df["Last Name"] = ""
+# Check if "Last Name" doesn't exist and create it
+if "Last Name" not in df.columns:
+    df["Last Name"] = ""
     
     st.subheader('Updated DataFrame:')
     st.write(df)
