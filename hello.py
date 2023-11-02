@@ -24,9 +24,17 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
 
-# Add a button to proceed with default YAML
-if st.button("Continue with Default YAML"):
-    st.session_state.df = df
-    st.session_state.reference_columns = reference_columns
-    st.title("Page 1: Automated and Manual Column Mapping")
-    page1.page_1()
+if "page_1_started" not in st.session_state:
+    st.session_state.page_1_started = False
+
+if not st.session_state.page_1_started:
+    # Add a button to proceed with default YAML
+    if st.button("Continue with Default YAML"):
+        st.session_state.page_1_started = True
+        st.session_state.df = df
+        st.session_state.reference_columns = reference_columns
+        st.title("Page 1: Automated and Manual Column Mapping")
+        page1.page_1()
+
+if st.session_state.page_1_started:
+    st.title("Welcome to the Multi-Page Streamlit App")  # Avoid duplicate title
