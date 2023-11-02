@@ -1,13 +1,13 @@
 import streamlit as st
 from pages import page1
-import pandas as pd
+import pandas as pd 
 st.set_page_config(page_title="Multi-Page App")
 
 st.title("Welcome to the Multi-Page Streamlit App")
 
-# Upload DataFrame and YAML file in the main script
-uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"])
-reference_file = st.file_uploader("Upload YAML file with reference columns (optional)", type=["yml", "yaml"])
+# Unique keys for file upload widgets
+uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"], key="excel_uploader")
+reference_file = st.file_uploader("Upload YAML file with reference columns (optional)", type=["yml", "yaml"], key="yaml_uploader")
 
 # Initialize DataFrame and reference_columns
 df = None
