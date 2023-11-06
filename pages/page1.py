@@ -5,7 +5,7 @@ import re
 import yaml
 
 def page_1():
-    st.title("Automated and Manual Column Mapping")
+    st.title("Page 1: Automated and Manual Column Mapping")
 
     # Access data from st.session_state
     df = st.session_state.df
@@ -48,6 +48,7 @@ def page_1():
 
         if change_columns_input.lower() != 'none':
             change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
+            modified = False  # To track if any column is modified
             for column_index in change_columns_list:
                 if 0 <= column_index < len(matched_columns):
                     selected_column = list(matched_columns.keys())[column_index]
@@ -60,10 +61,11 @@ def page_1():
                         if 0 <= match_index < len(matched_columns[selected_column]):
                             chosen_mapping = matched_columns[selected_column][match_index][0]
                             df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                            modified = True
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
-                    else:
-                        st.write("No changes have been made to the column")
-        
+            if not modified:
+                st.write("No changes have been made to the columns.")
+
         # Remove columns that are not in reference_columns in the updated DataFrame
         columns_to_remove = [col for col in df.columns if col not in reference_columns]
         df.drop(columns=columns_to_remove, inplace=True)
