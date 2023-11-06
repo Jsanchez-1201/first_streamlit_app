@@ -5,7 +5,7 @@ import re
 import yaml
 
 def page_1():
-    st.title("Page 1: Automated and Manual Column Mapping")
+    st.title("Automated and Manual Column Mapping")
 
     # Access data from st.session_state
     df = st.session_state.df
