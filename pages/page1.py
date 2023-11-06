@@ -1,41 +1,76 @@
 import streamlit as st
 import pandas as pd
+import fuzzywuzzy.process as fuzz
+import re
 import yaml
-from pages import page1
 
-st.set_page_config(page_title="Multi-Page App")
+def page_1():
+    st.title("Page 1: Automated and Manual Column Mapping")
 
-st.title("Welcome to the Marketing Data Cleaning App")
+    # Access data from st.session_state
+    df = st.session_state.df
+    reference_columns = st.session_state.reference_columns
 
-# Unique keys for file upload widgets
-uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"], key="excel_uploader")
-reference_file = st.file_uploader("Upload YAML file with reference columns (optional)", type=["yml", "yaml"], key="yaml_uploader")
+    last_name_pattern = re.compile(r'\b[lL][aA][sS][tT]\s?[nN][aA][mM][eE]\b|\bLST\s?NM\b')
 
-# Initialize DataFrame and reference_columns
-df = None
-reference_columns = []
+    # Function to find and match columns
+    def match_columns(df, reference_columns):
+        matched_columns = {}  # Initialize the matched_columns dictionary
+        input_columns = df.columns.tolist()
 
-if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file)
-    if reference_file is not None:
-        with reference_file as file:
-            try:
-                reference_columns = yaml.safe_load(file)
-            except Exception as e:
-                st.error(f"Error loading reference columns: {str(e)}")
+        for column in input_columns:
+            matches = fuzz.extractBests(column, reference_columns)
+            if matches:
+                matched_columns[column] = matches
 
-# Initialize a flag to control page navigation
-show_page1 = False
+        return matched_columns
 
-# Add a button to proceed with default YAML
-if st.button("Continue with Default YAML"):
-    show_page1 = True
+    if df is not None:
+        if "mapped_columns" not in st.session_state:
+            # Perform initial automated mapping only once
+            matched_columns = match_columns(df, reference_columns)
+            st.session_state.mapped_columns = matched_columns
 
-if show_page1:
-    # Pass data to Page 1 using st.session_state
-    st.session_state.df = df
-    st.session_state.reference_columns = reference_columns
-    page1.page_1()
+        # Display the mapped columns
+        st.subheader('Mapped Columns:')
+        mapped_columns_text = ""
+        for column_index, (column, mapping) in enumerate(st.session_state.mapped_columns.items()):
+            mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
+        st.text(mapped_columns_text)
 
-if st.session_state.df is not None and st.session_state.reference_columns:
-    page1.page_1()
+        # Perform manual mapping only if a list of columns is provided
+        change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 1, 2') or 'none' to skip:")
+        if change_columns_input.lower() != 'none':
+            change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
+            modified = False
+            for column_index in change_columns_list:
+                if 0 <= column_index < len(st.session_state.mapped_columns):
+                    selected_column = list(st.session_state.mapped_columns.keys())[column_index]
+                    st.write(f"Mapping options for column {column_index}: '{selected_column}':")
+                    for j, (match, score) in enumerate(st.session_state.mapped_columns[selected_column]):
+                        st.write(f"  {j}. Map to '{match}' (Score: {score})")  # Display all mapping options
+                    match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:")
+                    if match_choice.lower() != 'skip' and match_choice.isdigit():
+                        match_index = int(match_choice)
+                        if 0 <= match_index < len(st.session_state.mapped_columns[selected_column]):
+                            chosen_mapping = st.session_state.mapped_columns[selected_column][match_index][0]
+                            df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                            modified = True
+                            st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
+            if not modified:
+                st.write("No changes have been made to the columns.")
+
+        # Remove columns that are not in reference_columns in the updated DataFrame
+        columns_to_remove = [col for col in df.columns if col not in reference_columns]
+        df.drop(columns=columns_to_remove, inplace=True)
+
+        # Add the "Last Name" column if it doesn't exist
+        if "Last Name" not in df.columns:
+            df["Last Name"] = ""
+
+        # Display the updated DataFrame
+        st.subheader('Updated DataFrame:')
+        st.write(df)
+
+if __name__ == "__main__":
+    page_1()
