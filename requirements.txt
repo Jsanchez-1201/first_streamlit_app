@@ -11,3 +11,4 @@ python-Levenshtein==0.23.0
 pytest-warnings==0.3.1
 collection==0.1.6
 streamlit==1.28.1
+pip install --upgrade pip
