@@ -50,43 +50,49 @@ def page_1():
             mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
         st.text(mapped_columns_text)
 
-        # Use st.form for user input
-        with st.form(key='user_input_form'):
+        execution = True
+        while execution:
             st.subheader('Column Modification')
-            change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:")
-            submit_button = st.form_submit_button("Submit")
+            change_columns_input = st.text_input(
+                "Enter a list of columns to modify (e.g., '0, 1, 2') or 'none' to skip:",
+                key="change_columns_input"  # Unique key
+            )
 
-        # Process form submission
-        if submit_button:
             if change_columns_input.lower() != 'none':
-                change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
-                st.session_state.change_columns_list = change_columns_list
-                st.session_state.process_change_columns = True
-            else:
-                st.session_state.process_change_columns = False
+                change_columns_list = [int(col.strip()) for col in change_columns_input.split(',')]
 
-        # Process user input
-        if st.session_state.process_change_columns:
-            change_columns_list = st.session_state.change_columns_list
-            matched_columns = st.session_state.mapped_columns
+                for column_index in change_columns_list:
+                    if 0 <= column_index and column_index < len(st.session_state.mapped_columns):
+                        selected_column = list(st.session_state.mapped_columns.keys())[column_index]
+                        st.write(f"Mapping options for column {column_index}: '{selected_column}':")
+                        for j, (match, score) in enumerate(st.session_state.mapped_columns[selected_column]):
+                            st.write(f"  {j}. Map to '{match}' (Score: {score}")
 
-            for column_index in change_columns_list:
-                if 0 <= column_index and column_index < len(matched_columns):
-                    selected_column = list(matched_columns.keys())[column_index]
-                    st.write(f"Mapping options for column {column_index}: '{selected_column}':")
-                    for j, (match, score) in enumerate(matched_columns[selected_column]):
-                        st.write(f"  {j}. Map to '{match}' (Score: {score})")
-                    match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:")
-                    if match_choice.lower() != 'skip' and match_choice.isdigit():
-                        match_index = int(match_choice)
-                        if 0 <= match_index < len(matched_columns[selected_column]):
-                            chosen_mapping = matched_columns[selected_column][match_index][0]
-                            st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
-                            st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
-                        else:
-                            st.write("No changes have been made to the columns.")
+                        while True:
+                            match_choice = st.text_input(
+                                "Enter the number for the mapping, or 'skip' to keep as is:",
+                                key=f"match_choice_{column_index}"  # Unique key
+                            )
+                            if match_choice.lower() == 'skip':
+                                break
+                            elif match_choice.isdigit():
+                                match_index = int(match_choice)
+                                if 0 <= match_index < len(st.session_state.mapped_columns[selected_column]):
+                                    chosen_mapping = st.session_state.mapped_columns[selected_column][match_index][0]
+                                    st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                                    st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'")
+                                    break
+                                else:
+                                    st.write("Invalid input. Please enter a valid number.")
+                            else:
+                                st.write("Invalid input. Please enter a valid number or 'skip'")
+
+                        execution = False
                     else:
-                        st.write("Invalid input. Please enter a valid number or 'skip'.")
+                        st.write("Invalid input, please choose a number or a list of numbers corresponding to a column")
+            else:
+                st.write("No reference columns loaded. Please check the reference columns file.")
+                execution = False
 
         # Remove columns that are not in reference_columns in the updated DataFrame
         columns_to_remove = [col for col in st.session_state.df.columns if col not in st.session_state.reference_columns]
