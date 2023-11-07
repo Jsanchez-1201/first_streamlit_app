@@ -65,8 +65,8 @@ def page_1():
                         st.write("No changes have been made to the columns.")
 
         # Remove columns that are not in reference_columns in the updated DataFrame
-        columns_to_remove = [col for col in df.columns if col not in reference_columns]
-        df.drop(columns=columns_to_remove, inplace=True)
+        #columns_to_remove = [col for col in df.columns if col not in reference_columns]
+        #df.drop(columns=columns_to_remove, inplace=True)
 
         # Add the "Last Name" column if it doesn't exist
         if "Last Name" not in df.columns:
