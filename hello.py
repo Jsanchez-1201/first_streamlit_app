@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
+import fuzzywuzzy.process as fuzz
+import re
 import yaml
-import page1
 
 st.set_page_config(page_title="Multi-Page App")
 
@@ -24,10 +25,20 @@ if uploaded_file is not None:
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
 
-# Add a button to proceed with default YAML
 if st.button("Continue with Default YAML"):
     st.session_state.df = df
     st.session_state.reference_columns = reference_columns
-    page1.page_1()
+    st.session_state.default_yaml = True
 
+if not hasattr(st.session_state, 'df'):
+    st.session_state.df = None
+if not hasattr(st.session_state, 'reference_columns'):
+    st.session_state.reference_columns = None
+if not hasattr(st.session_state, 'default_yaml'):
+    st.session_state.default_yaml = False
 
+if st.session_state.df is not None:
+    if st.session_state.default_yaml:
+        st.write("Using the default YAML.")
+    else:
+        st.write("Using the uploaded YAML.")
