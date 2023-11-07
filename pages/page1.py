@@ -44,19 +44,21 @@ def page_1():
             change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 1, 2') or 'none' to skip:")
     
             if change_columns_input.lower() != 'none':
-                change_columns_list = [int(col.strip()) for col in change_columns_input.split(',')]
+                change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
+                if not change_columns_list:
+                    st.warning("No valid columns entered. Please enter a list of valid column numbers.")
+                    continue
 
                 for column_index in change_columns_list:
-                    print(column_index, type(column_index), len(matched_columns))
                     if 0 <= column_index and column_index < len(matched_columns):
                         selected_column = list(matched_columns.keys())[column_index]
                         selected_columntemp = df.columns.tolist()[column_index]
-                        print(f"Mapping options for column {column_index}: '{selected_column}':")
+                        st.write(f"Mapping options for column {column_index}: '{selected_column}':")
                         for j, (match, score) in enumerate(matched_columns[selected_column]):
-                            print(f"  {j}. Map to '{match}' (Score: {score})")  # Display the full match
+                            st.write(f"  {j}. Map to '{match}' (Score: {score})")  # Display the full match
 
                         while True:
-                            match_choice = input("Enter the number for the mapping, or 'skip' to keep as is: ")
+                            match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:")
                             if match_choice.lower() == 'skip':
                                 break
                             elif match_choice.isdigit():
@@ -65,19 +67,18 @@ def page_1():
                                     chosen_mapping = matched_columns[selected_column][match_index][0]
                                     df.rename(columns={selected_columntemp: chosen_mapping}, inplace=True)
                                     selected_columntemp = df.columns.tolist()[column_index]
-                                    print(f"Column {column_index}: '{selected_columntemp}' has been mapped to '{chosen_mapping}'.")
+                                    st.write(f"Column {column_index}: '{selected_columntemp}' has been mapped to '{chosen_mapping}'.")
                                     break
                                 else:
-                                    print("Invalid input. Please enter a valid number.")
+                                    st.warning("Invalid input. Please enter a valid number.")
                             else:
-                                print("Invalid input. Please enter a valid number or 'skip'.")
+                                st.warning("Invalid input. Please enter a valid number or 'skip'.")
                         execution = False
                     else:
-                        print("Invalid input, please choose a number or a list of numbers corresponding to a column")
+                        st.warning("Invalid input, please choose a number or a list of numbers corresponding to a column")
             
-
             else:
-                print("No reference columns loaded. Please check the reference columns file.")
+                st.warning("No reference columns loaded. Please check the reference columns file.")
                 execution = False
 
         # Remove columns that are not in reference_columns in the updated DataFrame
