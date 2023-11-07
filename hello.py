@@ -2,14 +2,12 @@ import streamlit as st
 import pandas as pd
 import yaml
 from pages import page1
-
-st.set_page_config(page_title="Multi-Page App")
+# Initialize Streamlit session state
+if 'process_change_columns' not in st.session_state:
+    st.session_state.process_change_columns = Falsest.set_page_config(page_title="Multi-Page App")
 
 st.title("Welcome to the Marketing Data Cleaning App")
 
-# Initialize Streamlit session state
-if 'process_change_columns' not in st.session_state:
-    st.session_state.process_change_columns = False
 # Unique keys for file upload widgets
 uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"], key="excel_uploader")
 reference_file = st.file_uploader("Upload YAML file with reference columns (optional)", type=["yml", "yaml"], key="yaml_uploader")
