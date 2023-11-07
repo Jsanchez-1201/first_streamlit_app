@@ -6,6 +6,7 @@ from pages import page1
 if 'process_change_columns' not in st.session_state:
     st.session_state.process_change_columns = Falsest.set_page_config(page_title="Multi-Page App")
 
+st.set_page_config(page_title="Multi-Page App")
 st.title("Welcome to the Marketing Data Cleaning App")
 
 # Unique keys for file upload widgets
