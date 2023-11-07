@@ -1,7 +1,25 @@
 import streamlit as st
 import pandas as pd
-import yaml  # Import the yaml library
-from pages import page1  # Import your custom page
+import fuzzywuzzy.process as fuzz
+import re
+import yaml
+from pages import page1
+
+# Initialize session state variables
+if 'df' not in st.session_state:
+    st.session_state.df = None
+
+if 'reference_columns' not in st.session_state:
+    st.session_state.reference_columns = []
+
+if 'mapped_columns' not in st.session_state:
+    st.session_state.mapped_columns = {}
+
+if 'process_change_columns' not in st.session_state:
+    st.session_state.process_change_columns = False
+
+if 'change_columns_list' not in st.session_state:
+    st.session_state.change_columns_list = []
 
 st.set_page_config(page_title="Multi-Page App")
 
@@ -12,8 +30,8 @@ uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"], key="excel_
 reference_file = st.file_uploader("Upload YAML file with reference columns (optional)", type=["yml", "yaml"], key="yaml_uploader")
 
 # Initialize DataFrame and reference_columns
-df = None
-reference_columns = []
+df = st.session_state.df
+reference_columns = st.session_state.reference_columns
 
 # Pre-load the standard_columns.yml
 with open('standard_columns.yml', 'r') as default_yaml:
@@ -36,7 +54,7 @@ st.session_state.reference_columns = reference_columns
 if st.session_state.df is not None and st.session_state.reference_columns:
     page1.page_1()
 
-# Add a button to continue with the default yaml
+# Add a button to continue with the default YAML
 if st.button("Continue with Default YAML"):
     st.session_state.df = df
     st.session_state.reference_columns = default_reference_columns  # Assign the pre-loaded default YAML
