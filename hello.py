@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import yaml  # Import the yaml library
 from pages import page1  # Import your custom page
 
 st.set_page_config(page_title="Multi-Page App")
