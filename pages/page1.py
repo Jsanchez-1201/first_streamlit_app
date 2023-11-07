@@ -59,37 +59,40 @@ def page_1():
             )
 
             if change_columns_input.lower() != 'none':
-                change_columns_list = [int(col.strip()) for col in change_columns_input.split(',')]
+                change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
+                
+                if change_columns_list:
+                    for column_index in change_columns_list:
+                        if 0 <= column_index and column_index < len(st.session_state.mapped_columns):
+                            selected_column = list(st.session_state.mapped_columns.keys())[column_index]
+                            st.write(f"Mapping options for column {column_index}: '{selected_column}':")
+                            for j, (match, score) in enumerate(st.session_state.mapped_columns[selected_column]):
+                                st.write(f"  {j}. Map to '{match}' (Score: {score}")
 
-                for column_index in change_columns_list:
-                    if 0 <= column_index and column_index < len(st.session_state.mapped_columns):
-                        selected_column = list(st.session_state.mapped_columns.keys())[column_index]
-                        st.write(f"Mapping options for column {column_index}: '{selected_column}':")
-                        for j, (match, score) in enumerate(st.session_state.mapped_columns[selected_column]):
-                            st.write(f"  {j}. Map to '{match}' (Score: {score}")
-
-                        while True:
-                            match_choice = st.text_input(
-                                "Enter the number for the mapping, or 'skip' to keep as is:",
-                                key=f"match_choice_{column_index}"  # Unique key
-                            )
-                            if match_choice.lower() == 'skip':
-                                break
-                            elif match_choice.isdigit():
-                                match_index = int(match_choice)
-                                if 0 <= match_index < len(st.session_state.mapped_columns[selected_column]):
-                                    chosen_mapping = st.session_state.mapped_columns[selected_column][match_index][0]
-                                    st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
-                                    st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'")
+                            while True:
+                                match_choice = st.text_input(
+                                    "Enter the number for the mapping, or 'skip' to keep as is:",
+                                    key=f"match_choice_{column_index}"  # Unique key
+                                )
+                                if match_choice.lower() == 'skip':
                                     break
+                                elif match_choice.isdigit():
+                                    match_index = int(match_choice)
+                                    if 0 <= match_index < len(st.session_state.mapped_columns[selected_column]):
+                                        chosen_mapping = st.session_state.mapped_columns[selected_column][match_index][0]
+                                        st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                                        st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'")
+                                        break
+                                    else:
+                                        st.write("Invalid input. Please enter a valid number.")
                                 else:
-                                    st.write("Invalid input. Please enter a valid number.")
-                            else:
-                                st.write("Invalid input. Please enter a valid number or 'skip'")
+                                    st.write("Invalid input. Please enter a valid number or 'skip'")
 
-                        execution = False
-                    else:
-                        st.write("Invalid input, please choose a number or a list of numbers corresponding to a column")
+                            execution = False
+                        else:
+                            st.write("Invalid input, please choose a number or a list of numbers corresponding to a column")
+                else:
+                    st.write("Invalid input. Please enter a valid list of numbers.")
             else:
                 st.write("No reference columns loaded. Please check the reference columns file.")
                 execution = False
