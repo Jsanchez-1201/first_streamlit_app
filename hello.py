@@ -33,8 +33,8 @@ st.session_state.df = df
 st.session_state.reference_columns = reference_columns
 
 # Redirect to Page 1
-#if st.session_state.df is not None and st.session_state.reference_columns:
-    #page1.page_1()
+if st.session_state.df is not None and st.session_state.reference_columns:
+    page1.page_1()
 
 #Add a button to continue with the default yaml
 if st.button("Continue with Default YAML"):
