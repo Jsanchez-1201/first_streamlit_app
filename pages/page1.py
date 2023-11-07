@@ -41,8 +41,8 @@ def page_1():
         # Use st.form for user input
         with st.form(key='user_input_form'):
             st.subheader('Column Modification')
-            change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:")
-            submit_button = st.form_submit_button("Submit")
+            change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:", key='change_columns_input')
+            submit_button = st.form_submit_button("Submit", key='submit_button')
 
         # Process form submission
         if submit_button:
