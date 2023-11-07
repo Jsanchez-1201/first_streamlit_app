@@ -1,4 +1,3 @@
---upgrade pip
 fuzzywuzzy==0.18.0
 streamlit-scrollable-textbox
 pandas==2.1.2
