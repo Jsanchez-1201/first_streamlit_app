@@ -7,9 +7,21 @@ import yaml
 def page_1():
     st.title("Page 1: Automated and Manual Column Mapping")
 
-    # Access data from st.session_state
-    df = st.session_state.df
-    reference_columns = st.session_state.reference_columns
+    # Access data from st.session_state or initialize if not exists
+    if 'df' not in st.session_state:
+        st.session_state.df = None
+
+    if 'reference_columns' not in st.session_state:
+        st.session_state.reference_columns = []
+
+    if 'mapped_columns' not in st.session_state:
+        st.session_state.mapped_columns = {}
+
+    if 'process_change_columns' not in st.session_state:
+        st.session_state.process_change_columns = False
+
+    if 'change_columns_list' not in st.session_state:
+        st.session_state.change_columns_list = []
 
     last_name_pattern = re.compile(r'\b[lL][aA][sS][tT]\s?[nN][aA][mM][eE]\b|\bLST\s?NM\b')
 
@@ -25,10 +37,10 @@ def page_1():
 
         return matched_columns
 
-    if df is not None:
-        if "mapped_columns" not in st.session_state:
+    if st.session_state.df is not None:
+        if not st.session_state.mapped_columns:
             # Perform initial automated mapping only once
-            matched_columns = match_columns(df, reference_columns)
+            matched_columns = match_columns(st.session_state.df, st.session_state.reference_columns)
             st.session_state.mapped_columns = matched_columns
 
         # Display the mapped columns
@@ -41,8 +53,8 @@ def page_1():
         # Use st.form for user input
         with st.form(key='user_input_form'):
             st.subheader('Column Modification')
-            change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:", key='change_columns_input')
-            submit_button = st.form_submit_button("Submit", key='submit_button')
+            change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:")
+            submit_button = st.form_submit_button("Submit")
 
         # Process form submission
         if submit_button:
@@ -69,7 +81,7 @@ def page_1():
                         match_index = int(match_choice)
                         if 0 <= match_index < len(matched_columns[selected_column]):
                             chosen_mapping = matched_columns[selected_column][match_index][0]
-                            df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                            st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                         else:
                             st.write("No changes have been made to the columns.")
@@ -77,16 +89,16 @@ def page_1():
                         st.write("Invalid input. Please enter a valid number or 'skip'.")
 
         # Remove columns that are not in reference_columns in the updated DataFrame
-        columns_to_remove = [col for col in df.columns if col not in reference_columns]
-        df.drop(columns=columns_to_remove, inplace=True)
+        columns_to_remove = [col for col in st.session_state.df.columns if col not in st.session_state.reference_columns]
+        st.session_state.df.drop(columns=columns_to_remove, inplace=True)
 
         # Add the "Last Name" column if it doesn't exist
-        if "Last Name" not in df.columns:
-            df["Last Name"] = ""
+        if "Last Name" not in st.session_state.df.columns:
+            st.session_state.df["Last Name"] = ""
 
         # Display the updated DataFrame
         st.subheader('Updated DataFrame:')
-        st.write(df)
+        st.write(st.session_state.df)
 
 if __name__ == "__main__":
     page_1()
