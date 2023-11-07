@@ -92,5 +92,3 @@ def page_1():
         st.subheader('Updated DataFrame:')
         st.write(df)
 
-if __name__ == "__main__":
-    page_1()
