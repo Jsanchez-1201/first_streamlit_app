@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import fuzzywuzzy.process as fuzz
 import re
-import yaml
 
 def page_1():
     # Access data from st.session_state
