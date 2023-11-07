@@ -7,9 +7,21 @@ import yaml
 def page_1():
     st.title("Page 1: Automated and Manual Column Mapping")
 
-    # Access data from st.session_state
-    df = st.session_state.df
-    reference_columns = st.session_state.reference_columns
+    # Access data from st.session_state or initialize if not exists
+    if 'df' not in st.session_state:
+        st.session_state.df = None
+
+    if 'reference_columns' not in st.session_state:
+        st.session_state.reference_columns = []
+
+    if 'mapped_columns' not in st.session_state:
+        st.session_state.mapped_columns = {}
+
+    if 'process_change_columns' not in st.session_state:
+        st.session_state.process_change_columns = False
+
+    if 'change_columns_list' not in st.session_state:
+        st.session_state.change_columns_list = []
 
     last_name_pattern = re.compile(r'\b[lL][aA][sS][tT]\s?[nN][aA][mM][eE]\b|\bLST\s?NM\b')
 
@@ -25,10 +37,10 @@ def page_1():
 
         return matched_columns
 
-    if df is not None:
-        if "mapped_columns" not in st.session_state:
+    if st.session_state.df is not None:
+        if not st.session_state.mapped_columns:
             # Perform initial automated mapping only once
-            matched_columns = match_columns(df, reference_columns)
+            matched_columns = match_columns(st.session_state.df, st.session_state.reference_columns)
             st.session_state.mapped_columns = matched_columns
 
         # Display the mapped columns
@@ -38,47 +50,55 @@ def page_1():
             mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
         st.text(mapped_columns_text)
 
-        st.subheader('Column Modification')
-        change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:")
-        submit_button = st.button("Submit")
+        # Use st.form for user input
+        with st.form(key='user_input_form'):
+            st.subheader('Column Modification')
+            change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:")
+            submit_button = st.form_submit_button("Submit")
 
+        # Process form submission
         if submit_button:
             if change_columns_input.lower() != 'none':
                 change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
                 st.session_state.change_columns_list = change_columns_list
+                st.session_state.process_change_columns = True
             else:
-                st.session_state.change_columns_list = []
+                st.session_state.process_change_columns = False
 
-        change_columns_list = st.session_state.change_columns_list
-        matched_columns = st.session_state.mapped_columns
+        # Process user input
+        if st.session_state.process_change_columns:
+            change_columns_list = st.session_state.change_columns_list
+            matched_columns = st.session_state.mapped_columns
 
-        for column_index in change_columns_list:
-            if 0 <= column_index and column_index < len(matched_columns):
-                selected_column = list(matched_columns.keys())[column_index]
-                st.write(f"Mapping options for column {column_index}: '{selected_column}':")
-                for j, (match, score) in enumerate(matched_columns[selected_column]):
-                    st.write(f"  {j}. Map to '{match}' (Score: {score})")
-                match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:")
-                if match_choice.lower() != 'skip' and match_choice.isdigit():
-                    match_index = int(match_choice)
-                    if 0 <= match_index < len(matched_columns[selected_column]):
-                        chosen_mapping = matched_columns[selected_column][match_index][0]
-                        df.rename(columns={selected_column: chosen_mapping}, inplace=True)
-                        st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
-                else:
-                    st.write("No changes have been made to the columns.")
+            for column_index in change_columns_list:
+                if 0 <= column_index and column_index < len(matched_columns):
+                    selected_column = list(matched_columns.keys())[column_index]
+                    st.write(f"Mapping options for column {column_index}: '{selected_column}':")
+                    for j, (match, score) in enumerate(matched_columns[selected_column]):
+                        st.write(f"  {j}. Map to '{match}' (Score: {score})")
+                    match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:")
+                    if match_choice.lower() != 'skip' and match_choice.isdigit():
+                        match_index = int(match_choice)
+                        if 0 <= match_index < len(matched_columns[selected_column]):
+                            chosen_mapping = matched_columns[selected_column][match_index][0]
+                            st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                            st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
+                        else:
+                            st.write("No changes have been made to the columns.")
+                    else:
+                        st.write("Invalid input. Please enter a valid number or 'skip'.")
 
         # Remove columns that are not in reference_columns in the updated DataFrame
-        columns_to_remove = [col for col in df.columns if col not in reference_columns]
-        df.drop(columns=columns_to_remove, inplace=True)
+        columns_to_remove = [col for col in st.session_state.df.columns if col not in st.session_state.reference_columns]
+        st.session_state.df.drop(columns=columns_to_remove, inplace=True)
 
         # Add the "Last Name" column if it doesn't exist
-        if "Last Name" not in df.columns:
-            df["Last Name"] = ""
+        if "Last Name" not in st.session_state.df.columns:
+            st.session_state.df["Last Name"] = ""
 
         # Display the updated DataFrame
         st.subheader('Updated DataFrame:')
-        st.write(df)
+        st.write(st.session_state.df)
 
 if __name__ == "__main__":
     page_1()
