@@ -42,6 +42,7 @@ def page_1():
         with st.form(key='user_input_form'):
             st.subheader('Column Modification')
             change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:")
+            submit_button = st.form_submit_button("Submit")
 
             if change_columns_input.lower() != 'none':
                 change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
@@ -63,10 +64,8 @@ def page_1():
                         else:
                             st.write("Invalid input. Please enter a valid number or 'skip'.")
 
-        # Close the form
-        submitted = st.form_submit_button(label="Submit")
-
-        if submitted:
+        # Process form submission
+        if submit_button:
             # Remove columns that are not in reference_columns in the updated DataFrame
             columns_to_remove = [col for col in df.columns if col not in reference_columns]
             df.drop(columns=columns_to_remove, inplace=True)
