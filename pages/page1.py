@@ -69,26 +69,25 @@ def page_1():
         if st.session_state.process_change_columns:
             change_columns_list = st.session_state.change_columns_list
             matched_columns = st.session_state.mapped_columns
-
+        
             for column_index in change_columns_list:
                 if 0 <= column_index and column_index < len(matched_columns):
                     selected_column = list(matched_columns.keys())[column_index]
                     st.write(f"Mapping options for column {column_index}: '{selected_column}':")
                     for j, (match, score) in enumerate(matched_columns[selected_column]):
-                        st.write(f"  {j}. Map to '{match}' (Score: {score})")
+                        st.write(f"  {j}. Map to '{match}' (Score: {score}")
                     match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:", key=f"match_choice_{column_index}")
                     if match_choice.lower() != 'skip' and match_choice.isdigit():
                         match_index = int(match_choice)
                         if 0 <= match_index < len(matched_columns[selected_column]):
                             chosen_mapping = matched_columns[selected_column][match_index][0]
-                            # Rename columns one by one
+                            # Rename columns directly in the DataFrame
                             st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                         else:
                             st.write("No changes have been made to the columns.")
                     else:
                         st.write("Invalid input. Please enter a valid number or 'skip'.")
-
         # Remove columns that are not in reference_columns in the updated DataFrame
         columns_to_remove = [col for col in st.session_state.df.columns if col not in st.session_state.reference_columns and col not in st.session_state.mapped_columns]
         for col in columns_to_remove:
