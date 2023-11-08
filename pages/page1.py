@@ -89,7 +89,7 @@ def page_1():
                         st.write("Invalid input. Please enter a valid number or 'skip'.")
 
         # Remove columns that are not in reference_columns in the updated DataFrame
-        columns_to_remove = [col for col in st.session_state.df.columns if col not in st.session_state.reference_columns]
+        columns_to_remove = [col for col in st.session_state.df.columns if col not in st.session_state.reference_columns and col not in st.session_state.mapped_columns]
         st.session_state.df.drop(columns=columns_to_remove, inplace=True)
 
         # Add the "Last Name" column if it doesn't exist
