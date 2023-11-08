@@ -5,6 +5,7 @@ import re
 import yaml
 from pages import page1
 
+
 # Initialize session state variables
 if 'df' not in st.session_state:
     st.session_state.df = None
