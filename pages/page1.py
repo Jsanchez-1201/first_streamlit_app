@@ -43,6 +43,10 @@ def page_1():
             matched_columns = match_columns(st.session_state.df, st.session_state.reference_columns)
             st.session_state.mapped_columns = matched_columns
 
+            for column, mapping in matched_columns.items():
+                st.session_state.df.rename(columns={column: mapping[0][0]}, inplace=True)
+    
+
         # Display the mapped columns
         st.subheader('Mapped Columns:')
         mapped_columns_text = ""
