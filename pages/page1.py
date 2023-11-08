@@ -81,6 +81,7 @@ def page_1():
                         match_index = int(match_choice)
                         if 0 <= match_index < len(matched_columns[selected_column]):
                             chosen_mapping = matched_columns[selected_column][match_index][0]
+                            # Rename columns one by one
                             st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                         else:
@@ -90,7 +91,8 @@ def page_1():
 
         # Remove columns that are not in reference_columns in the updated DataFrame
         columns_to_remove = [col for col in st.session_state.df.columns if col not in st.session_state.reference_columns and col not in st.session_state.mapped_columns]
-        st.session_state.df.drop(columns=columns_to_remove, inplace=True)
+        for col in columns_to_remove:
+            st.session_state.df.drop(columns=col, inplace=True)
 
         # Add the "Last Name" column if it doesn't exist
         if "Last Name" not in st.session_state.df.columns:
