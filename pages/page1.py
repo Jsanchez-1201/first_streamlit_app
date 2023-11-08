@@ -100,8 +100,8 @@ def page_1():
 
         # Display the updated DataFrame
         st.subheader('Updated DataFrame:')
-        mapped_df = st.session_state.df.rename(columns=st.session_state.mapped_columns)
-        st.write(mapped_df)
+        # Convert list-like objects to strings before displaying
+        st.write(st.session_state.df.applymap(lambda x: ', '.join(x) if isinstance(x, list) else x))
 
 if __name__ == "__main__":
     page_1()
