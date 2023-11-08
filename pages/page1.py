@@ -43,8 +43,16 @@ def page_1():
             matched_columns = match_columns(st.session_state.df, st.session_state.reference_columns)
             st.session_state.mapped_columns = matched_columns
 
+            unique_identifier = 1  # Initialize a unique identifier
             for column, mapping in matched_columns.items():
-                st.session_state.df.rename(columns={column: mapping[0][0]}, inplace=True)
+                new_column_name = mapping[0][0]
+            
+                # Check for duplicate column names and add a unique identifier
+                while new_column_name in st.session_state.df.columns:
+                    new_column_name = f"{mapping[0][0]}_{unique_identifier}"
+                    unique_identifier += 1
+
+                st.session_state.df.rename(columns={column: new_column_name}, inplace=True)
     
 
         # Display the mapped columns
