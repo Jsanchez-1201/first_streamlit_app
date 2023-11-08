@@ -98,7 +98,8 @@ def page_1():
 
         # Display the updated DataFrame
         st.subheader('Updated DataFrame:')
-        st.write(st.session_state.df)
+        mapped_df = st.session_state.df.rename(columns=st.session_state.mapped_columns)
+        st.write(mapped_df)
 
 if __name__ == "__main__":
     page_1()
