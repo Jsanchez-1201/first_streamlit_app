@@ -82,7 +82,6 @@ def page_2():
         return clusters, old_names, header_name
     
     def editing_cluster(data):
-        try:
             # calling the clustering function
             editing_clusters, old_names, header_name = clustering(data) # run
             while True:
@@ -125,8 +124,8 @@ def page_2():
                             new_cluster_id = max(editing_clusters.keys()) + 1 # could be an error
                             editing_clusters[new_cluster_id] = [item_to_split]
                         st.session_state.editing_clusters = editing_clusters
-    editing_clusters = editing_cluster(updated_dataframe)
-    return editing_clusters
+        editing_clusters = editing_cluster(updated_dataframe)
+        return editing_clusters
         #         elif choice == "4":
         #             new_cluster_id = max(editing_clusters.keys()) + 1
         #             new_item = input("Enter the new item to create a cluster: ")
