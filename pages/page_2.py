@@ -104,8 +104,8 @@ def page_2():
                             editing_clusters[to_cluster_id].append(item_to_move)
                         st.session_state.editing_clusters = editing_clusters
                 elif choice == "Merge clusters":
-                    cluster1_id = st.text_input("Enter the first cluster ID to merge: "))
-                    cluster2_id = st.text_input("Enter the second cluster ID to merge: "))
+                    cluster1_id = st.text_input("Enter the first cluster ID to merge: ")
+                    cluster2_id = st.text_input("Enter the second cluster ID to merge: ")
                     submit_button = st.button("Merge item")
                     if submit_button:
                         st.session_state.cluster1_id = cluster1_id  # Update session state
@@ -114,7 +114,7 @@ def page_2():
                         del editing_clusters[cluster2_id]
                         st.session_state.editing_clusters = editing_clusters
                 elif choice == "Split a cluster":
-                    cluster_id = st.text_input("Enter the cluster ID to split: "))
+                    cluster_id = st.text_input("Enter the cluster ID to split: ")
                     item_to_split = st.text_input("Enter the item you want to split: ")
                     submit_button = st.button("Split a cluster")
                     if submit_button:
