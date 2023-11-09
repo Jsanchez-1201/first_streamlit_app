@@ -70,6 +70,7 @@ def page_2():
             st.subheader('Clustering Results:')
             if st.session_state.clusters is not None:
                 st.write(st.session_state.clusters)
+            return clusters, old_names, header_name
     def editing_cluster(data):
         try:
             # calling the clustering function
