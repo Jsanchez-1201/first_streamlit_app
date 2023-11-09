@@ -112,7 +112,6 @@ def page_1():
             # Perform initial automated mapping only once
             cleaned_title = job_title(st.session_state.df)
             st.session_state.df = cleaned_title
-            
         def split_name(data):
             try:
                 # data = pd.read_excel(revision_file)
@@ -128,6 +127,10 @@ def page_1():
             except OSError as e:
                     print(f"Unable to open {data} beacuse: {e}", file=sys.stderr)
                     return
+        if st.session_state.df is not None:
+        # Perform initial automated mapping only once
+            splitted_name = split_name(st.session_state.df)
+            st.session_state.df = splitted_name
     def validate_names(data):
         try:
             # data = pd.read_excel(revision_file)
@@ -149,6 +152,10 @@ def page_1():
         except OSError as e:
                 print(f"Unable to open {data} beacuse: {e}", file=sys.stderr)
                 return
+    if st.session_state.df is not None:
+        # Perform initial automated mapping only once
+        name_validation = validate_names(st.session_state.df)
+        st.session_state.df = name_validation
     def validate_emails(df):
         # Extracting the Email and Lead Gatherer Email columns
         email_columns = ['Email']
@@ -160,6 +167,10 @@ def page_1():
             df[column_name] = df[column].apply(lambda email: bool(regex.match(pattern, email)))
         # Display the modified DataFrame
         return df
+    if st.session_state.df is not None:
+        # Perform initial automated mapping only once
+        email_validation = validate_emails(st.session_state.df)
+        st.session_state.df = email_validation
     # Display the updated DataFrame
     st.subheader('Updated DataFrame:')
     st.write(st.session_state.df)
