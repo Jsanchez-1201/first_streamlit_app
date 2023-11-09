@@ -164,6 +164,15 @@ def page_1():
         # Perform initial automated mapping only once
         email_validation = validate_emails(st.session_state.df)
         st.session_state.df = email_validation
+    
+    def map_work_columns(data):
+        data.columns = data.columns.str.replace(r'^(work)([\n-\/\\]+)', '', case= False)
+        return data
+    if st.session_state.df is not None:
+    # Perform initial automated mapping only once
+        work = map_work_columns(st.session_state.df)
+        st.session_state.df = work
+    
     # Display the updated DataFrame
     st.subheader('Updated DataFrame:')
     st.write(st.session_state.df)
