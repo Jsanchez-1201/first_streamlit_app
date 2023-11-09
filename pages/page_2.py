@@ -30,14 +30,16 @@ def page_2():
         st.session_state.from_cluster_id = 'none'
     if 'editing_clusters' not in st.session_state:
         st.session_state.editing_clusters = None
+    
     def levenshtein_distance(s1, s2):
         return Levenshtein.distance(s1, s2)
+    
     def clustering(data):
         # Add a widget to set the 'header_name' variable
-        st.subheader('Set Header Name:')
-        header_name = st.text_input("Enter a header name:", key="header_name_input")
+        # st.subheader('Set Header Name:')
+        header_name = st.text_input("Enter the Header Name:", key="header_name_input")
         # Add a button to trigger the distance matrix computation
-        submit_button = st.button("Compute Distance Matrix")
+        submit_button = st.button("Compute Clustering")
         if submit_button:
             st.session_state.header_name = header_name  # Update session state
             if header_name != 'none':
@@ -61,17 +63,20 @@ def page_2():
                     if label not in old_names:
                         old_names[label] = []
                     old_names[label].append(texts[i])
+                
                 st.session_state.clusters = clusters  # Update session state
                 st.session_state.old_names = old_names  # Update session state
-            # Display the computed distance matrix
-            st.subheader('Distance Matrix:') # it could be not shown
-            if st.session_state.distance_matrix is not None:
-                st.write(st.session_state.distance_matrix)
+            
+            # # Display the computed distance matrix
+            # st.subheader('Distance Matrix:') # it could be not shown
+            # if st.session_state.distance_matrix is not None:
+            #     st.write(st.session_state.distance_matrix)
             # Display the clustering results
             st.subheader('Clustering Results:')
             if st.session_state.clusters is not None:
                 st.write(st.session_state.clusters)
         return clusters, old_names, header_name
+    
     def editing_cluster(data):
         try:
             # calling the clustering function
@@ -79,7 +84,7 @@ def page_2():
             while True:
                 print("Current Clusters:")
                 for cluster_label, cluster_items in editing_clusters.items():
-                    print(f"Cluster {cluster_label}: {cluster_items}")
+                    st.write(f"Cluster {cluster_label}: {cluster_items}")
                 choice = st.selectbox("Options for editing clusters:",("Move an item to another cluster","Merge clusters", "Split a cluster","Create a new cluster","Edit the information within the cluster", "Skip"))
                 if choice == "Move an item to another cluster":
                     item_to_move = st.text_input("Enter the item you want to move:", key="item_to_move_input")
@@ -93,7 +98,7 @@ def page_2():
                         if item_to_move in editing_clusters[from_cluster_id]:
                             editing_clusters[from_cluster_id].remove(item_to_move)
                             editing_clusters[to_cluster_id].append(item_to_move)
-                        st.session_state.editing_clusters = editing_clusters
+            st.session_state.editing_clusters = editing_clusters
         #         elif choice == "2":
         #             cluster1_id = int(input("Enter the first cluster ID to merge: "))
         #             cluster2_id = int(input("Enter the second cluster ID to merge: "))
