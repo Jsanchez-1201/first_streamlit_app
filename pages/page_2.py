@@ -94,7 +94,7 @@ def page_2():
                     submit_button = st.button("Move item")
                     if submit_button:
                         st.session_state.item_to_move = item_to_move  # Update session state
-                        st.session_state.from_cluster_id = item_to_move
+                        st.session_state.from_cluster_id = from_cluster_id
                         if item_to_move in editing_clusters[from_cluster_id]:
                             editing_clusters[from_cluster_id].remove(item_to_move)
                             editing_clusters[to_cluster_id].append(item_to_move)
