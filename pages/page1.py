@@ -18,8 +18,8 @@ def page_1():
         st.session_state.process_change_columns = False
     if 'change_columns_list' not in st.session_state:
         st.session_state.change_columns_list = []
-    if 'df_page1' not in st.session_state:
-        st.session_state.df_page1 = None
+    # if 'df_page1' not in st.session_state:
+    #     st.session_state.df_page1 = None
     # Function to find and match columns
     def match_columns(df, reference_columns):
         matched_columns = {}  # Initialize the matched_columns dictionary
