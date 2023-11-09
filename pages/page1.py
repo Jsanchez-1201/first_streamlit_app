@@ -91,7 +91,7 @@ def page_1():
         # Display the updated DataFrame
         st.subheader('Updated DataFrame:')
         st.write(st.session_state.df)
-        st.subheader("Automatic validations")
+    st.subheader("Automatic validations")
     def job_title(df):
         try:
             #   df = pd.read_excel(revision_file)
@@ -100,11 +100,12 @@ def page_1():
             percentage = (missing_job/count)
             if percentage <= 0.25:
                 df = df[df['Title'].notna()]
-                print ('All the records with missing information were deleted. Job Title has their 75% with valid information.')
-                return df
+                st.write ('All the records with missing information were deleted. Job Title has their 75% with valid information.')
+                # return df
             else:
-                print('In this dataset, less than 75% does not have Job Title completed')
-                return df
+                st.write('In this dataset, less than 75% does not have Job Title completed')
+                # return df
+            return df
         except OSError as e:
                 print(f"Unable to open {df} because: {e}", file=sys.stderr)
                 return
@@ -124,30 +125,26 @@ def page_1():
             # return df
         return df
     if st.session_state.df is not None:
-    # Perform initial automated mapping only once
+        # Perform initial automated mapping only once
         splitted_name = split_name(st.session_state.df)
         st.session_state.df = splitted_name
     def validate_names(data):
-        try:
-            # data = pd.read_excel(revision_file)
-            data_temp = data
-            data = data[data['First Name'].notna()]
-            lenght = data['First Name'].str.len()
-            mask = lenght >= 2
-            data = data[mask]
-            name_nulls = data_temp['First Name'].isna().sum()
-            count_total_temp = data_temp['First Name'].count() + name_nulls
-            count_rows = data['First Name'].count()
-            percentage = count_rows/count_total_temp
-            if percentage <= 0.25:
-                print('All the records with missing information were deleted. Name has their 75% with information.')
-                return data
-            else:
-                print('In this dataset, less than 75% does not have a valid Name')
-                return data_temp
-        except OSError as e:
-                print(f"Unable to open {data} beacuse: {e}", file=sys.stderr)
-                return
+        data_temp = data
+        data = data[data['First Name'].notna()]
+        lenght = data['First Name'].str.len()
+        mask = lenght >= 2
+        data = data[mask]
+        name_nulls = data_temp['First Name'].isna().sum()
+        count_total_temp = data_temp['First Name'].count() + name_nulls
+        count_rows = data['First Name'].count()
+        percentage = count_rows/count_total_temp
+        if percentage <= 0.25:
+            st.write('All the records with missing information were deleted. Name has their 75% with information.')
+            # return data
+        else:
+            st.write('In this dataset, less than 75% does not have a valid Name')
+            # return data_temp
+        return data
     if st.session_state.df is not None:
         # Perform initial automated mapping only once
         name_validation = validate_names(st.session_state.df)
