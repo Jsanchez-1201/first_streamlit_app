@@ -24,7 +24,7 @@ reference_file = st.file_uploader("Upload YAML file with reference columns (opti
 df = st.session_state.df
 reference_columns = st.session_state.reference_columns
 # Pre-load the standard_columns.yml
-with open('/Users/adriana_fallas/Desktop/mkt_data_lasso/config/standard_columns.yml', 'r') as default_yaml:
+with open('standard_columns.yml', 'r') as default_yaml:
     default_reference_columns = yaml.safe_load(default_yaml)
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
