@@ -158,6 +158,7 @@ def page_1():
         for column in email_columns:
             column_name = f'{column} Validation'
             df[column_name] = df[column].apply(lambda email: bool(re.match(pattern, email)))
+            df[column_name] = df[column_name].apply(lambda is_valid: 'Valid' if is_valid else 'Invalid')
         # Display the modified DataFrame
         return df
     if st.session_state.df is not None:
