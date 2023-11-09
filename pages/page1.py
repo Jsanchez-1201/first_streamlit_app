@@ -113,21 +113,16 @@ def page_1():
         cleaned_title = job_title(st.session_state.df)
         st.session_state.df = cleaned_title
     def split_name(df):
-        try:
-            # df = pd.read_excel(revision_file)
-            if df['Last Name'].isnull().values.any() == True:
-                df = df.replace('[-| .,\/_]+',' ', regex = True)
-                new = df["First Name"].str.split(" ", n=1, expand = True)
-                df["First Name"] = new[0]
-                df["Last Name"] = new[1]
-                #return df
-            else:
-                print("This dfbase already has both Name and Last Name in different columns.")
-                #return df
-            return df
-        except OSError as e:
-                print(f"Unable to open {df} beacuse: {e}", file=sys.stderr)
-                return
+        # if df['Last Name'].isnull().values.any() == True:
+        df = df.replace('[-| .,\/_]+',' ', regex = True)
+        new = df["First Name"].str.split(" ", n=1, expand = True)
+        df["First Name"] = new[0]
+        df["Last Name"] = new[1]
+            # return df
+        # else:
+        #     print("This database already has both Name and Last Name in different columns.")
+            # return df
+        return df
     if st.session_state.df is not None:
     # Perform initial automated mapping only once
         splitted_name = split_name(st.session_state.df)
