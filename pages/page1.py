@@ -120,10 +120,11 @@ def page_1():
                 new = df["First Name"].str.split(" ", n=1, expand = True)
                 df["First Name"] = new[0]
                 df["Last Name"] = new[1]
-                return df
+                #return df
             else:
                 print("This dfbase already has both Name and Last Name in different columns.")
-                return df
+                #return df
+            return df
         except OSError as e:
                 print(f"Unable to open {df} beacuse: {e}", file=sys.stderr)
                 return
