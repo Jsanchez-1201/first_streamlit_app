@@ -10,8 +10,8 @@ from collections import defaultdict
 def page_2():
     st.title("Cluster Functions")
     # Access the updated DataFrame from the session state
-    if 'df_page1' in st.session_state:
-        updated_dataframe = st.session_state.df_page1
+    if 'df' in st.session_state:
+        updated_dataframe = st.session_state.df
         # Using the previous DataFrame on this page
         st.write("Data from Page 1 in Page 2:")
         st.write(updated_dataframe)
