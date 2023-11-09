@@ -30,6 +30,10 @@ def page_2():
         st.session_state.from_cluster_id = 'none'
     if 'editing_clusters' not in st.session_state:
         st.session_state.editing_clusters = None
+    if 'cluster1_id not in st.session_state:
+        st.session_state.cluster1_id = None
+    if 'cluster2_id not in st.session_state:
+        st.session_state.cluster2_id = None
     
     def levenshtein_distance(s1, s2):
         return Levenshtein.distance(s1, s2)
@@ -82,7 +86,7 @@ def page_2():
             # calling the clustering function
             editing_clusters, old_names, header_name = clustering(data) # run
             while True:
-                print("Current Clusters:")
+                st.write("Current Clusters:")
                 for cluster_label, cluster_items in editing_clusters.items():
                     st.write(f"Cluster {cluster_label}: {cluster_items}")
                 choice = st.selectbox("Options for editing clusters:",("Move an item to another cluster","Merge clusters", "Split a cluster","Create a new cluster","Edit the information within the cluster", "Skip"))
@@ -99,18 +103,28 @@ def page_2():
                             editing_clusters[from_cluster_id].remove(item_to_move)
                             editing_clusters[to_cluster_id].append(item_to_move)
             st.session_state.editing_clusters = editing_clusters
-        #         elif choice == "2":
-        #             cluster1_id = int(input("Enter the first cluster ID to merge: "))
-        #             cluster2_id = int(input("Enter the second cluster ID to merge: "))
-        #             editing_clusters[cluster1_id] += editing_clusters[cluster2_id]
-        #             del editing_clusters[cluster2_id]
-        #         elif choice == "3":
-        #             cluster_id = int(input("Enter the cluster ID to split: "))
-        #             item_to_split = input("Enter the item you want to split: ")
-        #             if item_to_split in editing_clusters[cluster_id]:
-        #                 editing_clusters[cluster_id].remove(item_to_split)
-        #                 new_cluster_id = max(editing_clusters.keys()) + 1
-        #                 editing_clusters[new_cluster_id] = [item_to_split]
+                elif choice == "Merge clusters":
+                    cluster1_id = st.text_input("Enter the first cluster ID to merge: "))
+                    cluster2_id = st.text_input("Enter the second cluster ID to merge: "))
+                    submit_button = st.button("Merge item")
+                    if submit_button:
+                        st.session_state.cluster1_id = cluster1_id  # Update session state
+                        st.session_state.cluster2_id = cluster2_id
+                        editing_clusters[cluster1_id] += editing_clusters[cluster2_id]
+                        del editing_clusters[cluster2_id]
+            st.session_state.editing_clusters = editing_clusters
+                elif choice == "Split a cluster":
+                    cluster_id = st.text_input("Enter the cluster ID to split: "))
+                    item_to_split = st.text_input("Enter the item you want to split: ")
+                    submit_button = st.button("Split a cluster")
+                    if submit_button:
+                        st.session_state.cluster_id = cluster_id  # Update session state
+                        st.session_state.item_to_split = item_to_split
+                        if item_to_split in editing_clusters[cluster_id]:
+                            editing_clusters[cluster_id].remove(item_to_split)
+                            new_cluster_id = max(editing_clusters.keys()) + 1 # could be an error
+                            editing_clusters[new_cluster_id] = [item_to_split]
+          st.session_state.editing_clusters = editing_clusters
         #         elif choice == "4":
         #             new_cluster_id = max(editing_clusters.keys()) + 1
         #             new_item = input("Enter the new item to create a cluster: ")
