@@ -92,45 +92,45 @@ def page_1():
         st.subheader('Updated DataFrame:')
         st.write(st.session_state.df)
         st.subheader("Automatic validations")
-        def job_title(data):
-            try:
-                #   data = pd.read_excel(revision_file)
-                missing_job = data['Title'].isna().sum()
-                count = data['Title'].count() + missing_job
-                percentage = (missing_job/count)
-                if percentage <= 0.25:
-                    df = data[data['Title'].notna()]
-                    print ('All the records with missing information were deleted. Job Title has their 75% with valid information.')
-                    return df
-                else:
-                    print('In this dataset, less than 75% does not have Job Title completed')
-                    return data
-            except OSError as e:
-                    print(f"Unable to open {data} because: {e}", file=sys.stderr)
-                    return
-        if st.session_state.df is not None:
-            # Perform initial automated mapping only once
-            cleaned_title = job_title(st.session_state.df)
-            st.session_state.df = cleaned_title
-        def split_name(data):
-            try:
-                # data = pd.read_excel(revision_file)
-                if data['Last Name'].isnull().values.any() == True:
-                    data = data.replace('[-| .,\/_]+',' ', regex = True)
-                    new = data["First Name"].str.split(" ", n=1, expand = True)
-                    data["First Name"] = new[0]
-                    data["Last Name"] = new[1]
-                    return data
-                else:
-                    print("This database already has both Name and Last Name in different columns.")
-                    return data
-            except OSError as e:
-                    print(f"Unable to open {data} beacuse: {e}", file=sys.stderr)
-                    return
-        if st.session_state.df is not None:
+    def job_title(df):
+        try:
+            #   df = pd.read_excel(revision_file)
+            missing_job = df['Title'].isna().sum()
+            count = df['Title'].count() + missing_job
+            percentage = (missing_job/count)
+            if percentage <= 0.25:
+                df = df[df['Title'].notna()]
+                print ('All the records with missing information were deleted. Job Title has their 75% with valid information.')
+                return df
+            else:
+                print('In this dataset, less than 75% does not have Job Title completed')
+                return df
+        except OSError as e:
+                print(f"Unable to open {df} because: {e}", file=sys.stderr)
+                return
+    if st.session_state.df is not None:
         # Perform initial automated mapping only once
-            splitted_name = split_name(st.session_state.df)
-            st.session_state.df = splitted_name
+        cleaned_title = job_title(st.session_state.df)
+        st.session_state.df = cleaned_title
+    def split_name(df):
+        try:
+            # df = pd.read_excel(revision_file)
+            if df['Last Name'].isnull().values.any() == True:
+                df = df.replace('[-| .,\/_]+',' ', regex = True)
+                new = df["First Name"].str.split(" ", n=1, expand = True)
+                df["First Name"] = new[0]
+                df["Last Name"] = new[1]
+                return df
+            else:
+                print("This dfbase already has both Name and Last Name in different columns.")
+                return df
+        except OSError as e:
+                print(f"Unable to open {df} beacuse: {e}", file=sys.stderr)
+                return
+    if st.session_state.df is not None:
+    # Perform initial automated mapping only once
+        splitted_name = split_name(st.session_state.df)
+        st.session_state.df = splitted_name
     def validate_names(data):
         try:
             # data = pd.read_excel(revision_file)
