@@ -102,7 +102,7 @@ def page_2():
                         if item_to_move in editing_clusters[from_cluster_id]:
                             editing_clusters[from_cluster_id].remove(item_to_move)
                             editing_clusters[to_cluster_id].append(item_to_move)
-            st.session_state.editing_clusters = editing_clusters
+                        st.session_state.editing_clusters = editing_clusters
                 elif choice == "Merge clusters":
                     cluster1_id = st.text_input("Enter the first cluster ID to merge: "))
                     cluster2_id = st.text_input("Enter the second cluster ID to merge: "))
@@ -112,7 +112,7 @@ def page_2():
                         st.session_state.cluster2_id = cluster2_id
                         editing_clusters[cluster1_id] += editing_clusters[cluster2_id]
                         del editing_clusters[cluster2_id]
-            st.session_state.editing_clusters = editing_clusters
+                        st.session_state.editing_clusters = editing_clusters
                 elif choice == "Split a cluster":
                     cluster_id = st.text_input("Enter the cluster ID to split: "))
                     item_to_split = st.text_input("Enter the item you want to split: ")
@@ -124,7 +124,9 @@ def page_2():
                             editing_clusters[cluster_id].remove(item_to_split)
                             new_cluster_id = max(editing_clusters.keys()) + 1 # could be an error
                             editing_clusters[new_cluster_id] = [item_to_split]
-          st.session_state.editing_clusters = editing_clusters
+                        st.session_state.editing_clusters = editing_clusters
+    editing_clusters = editing_cluster(updated_dataframe)
+    return editing_clusters
         #         elif choice == "4":
         #             new_cluster_id = max(editing_clusters.keys()) + 1
         #             new_item = input("Enter the new item to create a cluster: ")
@@ -144,13 +146,11 @@ def page_2():
         #         for item in clusters_items:
         #             data = data.replace(item, editing_clusters[clusters_key][0])
         #     return data
-        except OSError as e:
-            print(f"Unable to open {data} beacuse: {e}", file=sys.stderr)
-            return
-    if updated_dataframe is not None:
-        st.button(on_click=editing_cluster(updated_dataframe))
-    # Display the updated DataFrame
-    st.subheader('Updated DataFrame:')
-    updated_dataframe = st.write(st.session_state.df)
+        
+    # if updated_dataframe is not None:
+    #     st.button(on_click=editing_cluster(updated_dataframe))
+    # # Display the updated DataFrame
+    # st.subheader('Updated DataFrame:')
+    # updated_dataframe = st.write(st.session_state.df)
 if __name__ == "__main__":
-    page_2()
+    updated_clusters = page_2()
