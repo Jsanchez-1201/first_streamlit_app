@@ -30,9 +30,9 @@ def page_2():
         st.session_state.from_cluster_id = 'none'
     if 'editing_clusters' not in st.session_state:
         st.session_state.editing_clusters = None
-    if 'cluster1_id not in st.session_state:
+    if 'cluster1_id' not in st.session_state:
         st.session_state.cluster1_id = None
-    if 'cluster2_id not in st.session_state:
+    if 'cluster2_id' not in st.session_state:
         st.session_state.cluster2_id = None
     
     def levenshtein_distance(s1, s2):
