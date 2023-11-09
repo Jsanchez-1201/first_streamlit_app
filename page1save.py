@@ -111,3 +111,6 @@ def page_1():
         # Display the updated DataFrame
         st.subheader('Updated DataFrame:')
         st.write(st.session_state.df)
+
+if __name__ == "__main__":
+    page_1()
