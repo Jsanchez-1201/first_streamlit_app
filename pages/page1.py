@@ -117,8 +117,8 @@ def page_1():
                 # data = pd.read_excel(revision_file)
                 if data['Last Name'].isnull().values.any() == True:
                     data = data.replace('[-| .,\/_]+',' ', regex = True)
-                    new = data["Name"].str.split(" ", n=1, expand = True)
-                    data["Name"] = new[0]
+                    new = data["First Name"].str.split(" ", n=1, expand = True)
+                    data["First Name"] = new[0]
                     data["Last Name"] = new[1]
                     return data
                 else:
@@ -135,13 +135,13 @@ def page_1():
         try:
             # data = pd.read_excel(revision_file)
             data_temp = data
-            data = data[data['Name'].notna()]
-            lenght = data['Name'].str.len()
+            data = data[data['First Name'].notna()]
+            lenght = data['First Name'].str.len()
             mask = lenght >= 2
             data = data[mask]
-            name_nulls = data_temp['Name'].isna().sum()
-            count_total_temp = data_temp['Name'].count() + name_nulls
-            count_rows = data['Name'].count()
+            name_nulls = data_temp['First Name'].isna().sum()
+            count_total_temp = data_temp['First Name'].count() + name_nulls
+            count_rows = data['First Name'].count()
             percentage = count_rows/count_total_temp
             if percentage <= 0.25:
                 print('All the records with missing information were deleted. Name has their 75% with information.')
