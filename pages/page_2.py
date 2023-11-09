@@ -10,6 +10,7 @@ from collections import defaultdict
 def page_2():
     st.title("Cluster Functions")
     # Access the updated DataFrame from the session state
+    updated_dataframe = None
     if 'df' in st.session_state:
         updated_dataframe = st.session_state.df
         # Using the previous DataFrame on this page
@@ -127,7 +128,8 @@ def page_2():
         except OSError as e:
             print(f"Unable to open {data} beacuse: {e}", file=sys.stderr)
             return
-    st.button(on_click=editing_cluster(updated_dataframe))
+    if updated_dataframe is not None:
+        st.button(on_click=editing_cluster(updated_dataframe))
     # Display the updated DataFrame
     st.subheader('Updated DataFrame:')
     updated_dataframe = st.write(st.session_state.df)
