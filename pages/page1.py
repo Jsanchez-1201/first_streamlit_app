@@ -166,7 +166,7 @@ def page_1():
         st.session_state.df = email_validation
     
     def map_work_columns(data):
-        data.columns = data.columns.str.replace(r'^(Work)(\[\n-\/\\]+)', '', case= False)
+        data.columns = data.columns.str.replace('Work ', '')
         return data
     if st.session_state.df is not None:
     # Perform initial automated mapping only once
