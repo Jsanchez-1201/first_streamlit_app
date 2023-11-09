@@ -108,6 +108,11 @@ def page_1():
             except OSError as e:
                     print(f"Unable to open {data} because: {e}", file=sys.stderr)
                     return
+        if st.session_state.df is not None:
+            # Perform initial automated mapping only once
+            cleaned_title = job_title(st.session_state.df)
+            st.session_state.df = cleaned_title
+            
         def split_name(data):
             try:
                 # data = pd.read_excel(revision_file)
