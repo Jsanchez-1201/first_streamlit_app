@@ -157,7 +157,7 @@ def page_1():
         # Iterate through the specified columns
         for column in email_columns:
             column_name = f'{column} Validation'
-            df[column_name] = df[column].apply(lambda email: bool(re.match(pattern, email)))
+            df[column_name] = df.loc[column].apply(lambda email: bool(re.match(pattern, email)))
         # Display the modified DataFrame
         return df
     if st.session_state.df is not None:
