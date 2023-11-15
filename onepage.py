@@ -162,6 +162,7 @@ def process_user_input_changes():
         for column_index in change_columns_list:
             if 0 <= column_index < len(matched_columns):
                 selected_column = list(matched_columns.keys())[column_index]
+                selected_columntemp = df.columns.tolist()[column_index]
                 st.write(f"Mapping options for column {column_index}: '{selected_column}':")
                 for j, (match, score) in enumerate(matched_columns[selected_column]):
                     st.write(f"  {j}. Map to '{match}' (Score: {score})")
@@ -171,7 +172,8 @@ def process_user_input_changes():
                     match_index = int(match_choice)
                     if 0 <= match_index < len(matched_columns[selected_column]):
                         chosen_mapping = matched_columns[selected_column][match_index][0]
-                        st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                        st.session_state.df.rename(columns={selected_columntemp: chosen_mapping}, inplace=True)
+                        selected_columntemp = df.columns.tolist()[column_index]
                         st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
                         st.write("No changes have been made to the columns.")
