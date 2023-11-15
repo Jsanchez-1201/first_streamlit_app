@@ -514,7 +514,54 @@ def splitting(df, column_to_split, character):
         
         st.write(st.session_state.df)
     
-    return st.session_state.df
+    return st.session_state
+
+def search_replace(df):
+    if 'df' not in st.session_state:
+        st.error("DataFrame not found in session state. Please upload or create a DataFrame in the previous steps.")
+        return
+
+    if 'choice' not in st.session_state:
+        st.session_state.choice = None
+
+    if 'column_name' not in st.session_state:
+        st.session_state.column_name = None
+
+    if 'find_value' not in st.session_state:
+        st.session_state.find_value = None
+
+    if 'replace_value' not in st.session_state:
+        st.session_state.replace_value = None
+
+    st.subheader("Preview DataFrame:")
+    st.write(st.session_state.df.head())
+
+    while True:
+        st.session_state.choice = st.radio("Select an option", ['Specific Column', 'Whole DataFrame', 'Finish'])
+
+        if st.session_state.choice == 'Specific Column':
+            st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):", key='column_name')
+            if st.session_state.column_name and st.session_state.column_name.lower() != 'finish' and st.session_state.column_name in st.session_state.df.columns:
+                st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
+                st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
+                st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+                st.write(f"Value replaced in {st.session_state.column_name}")
+            elif st.session_state.column_name.lower() == 'finish':
+                break
+            elif st.session_state.column_name:
+                st.warning(f"Column '{st.session_state.column_name}' not found in DataFrame. Please enter a valid column name.")
+        elif st.session_state.choice == 'Whole DataFrame':
+            st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_df')
+            st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_df')
+            st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+            st.write("Values replaced in the whole DataFrame")
+        elif st.session_state.choice == 'Finish':
+            st.success('Replace process finished')
+            break
+
+    st.subheader("DataFrame after replacement:")
+    st.write(st.session_state.df)
+
 
 def render_page_main():
     # Your page code here
@@ -611,6 +658,10 @@ def render_third_page():
     
 def render_fourth_page():
     st.title("Find and Replace Function")
+
+    if st.session_state.df is not None:
+        search_replace(st.session_state.df)
+        
     # Your page code here
 
 #Based on page number render required contents
