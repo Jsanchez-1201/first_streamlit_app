@@ -178,6 +178,7 @@ def process_user_input_changes():
                             while f"{chosen_mapping}_{suffix}" in df.columns:
                                 suffix += 1
                             chosen_mapping = f"{chosen_mapping}_{suffix}"
+                        column_mapping[selected_columntemp] = chosen_mapping
                         st.session_state.df.rename(columns={selected_columntemp: chosen_mapping}, inplace=True)
                         selected_columntemp = df.columns.tolist()[column_index]
                         st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
