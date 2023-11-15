@@ -172,14 +172,8 @@ def process_user_input_changes():
                     match_index = int(match_choice)
                     if 0 <= match_index < len(matched_columns[selected_column]):
                         chosen_mapping = matched_columns[selected_column][match_index][0]
-                        if chosen_mapping in df.columns:
-                            st.write(f"Column {column_index}: '{chosen_mapping}' already exists. Renaming with a suffix.")
-                            suffix = 1
-                            while f"{chosen_mapping}_{suffix}" in df.columns:
-                                suffix += 1
-                            chosen_mapping = f"{chosen_mapping}_{suffix}"
-                        column_mapping[selected_columntemp] = chosen_mapping
-                        st.session_state.df.rename(columns={selected_columntemp: chosen_mapping}, inplace=True)
+                        st.session_state.df[selected_columntemp] = st.session_state.df[chosen_mapping]
+                        #st.session_state.df.rename(columns={selected_columntemp: chosen_mapping}, inplace=True)
                         selected_columntemp = df.columns.tolist()[column_index]
                         st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
