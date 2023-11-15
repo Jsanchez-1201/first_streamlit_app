@@ -172,7 +172,7 @@ def process_user_input_changes():
                     match_index = int(match_choice)
                     if 0 <= match_index < len(matched_columns[selected_column]):
                         chosen_mapping = matched_columns[selected_column][match_index][0]
-                         if chosen_mapping in df.columns:
+                        if chosen_mapping in df.columns:
                             st.write(f"Column {column_index}: '{chosen_mapping}' already exists. Renaming with a suffix.")
                             suffix = 1
                             while f"{chosen_mapping}_{suffix}" in df.columns:
