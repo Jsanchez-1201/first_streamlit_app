@@ -516,7 +516,7 @@ def splitting(df, column_to_split, character):
     
     return st.session_state
 
-def search_replace(df):
+def search_replace():
     if 'df' not in st.session_state:
         st.error("DataFrame not found in session state. Please upload or create a DataFrame in the previous steps.")
         return
@@ -534,10 +534,10 @@ def search_replace(df):
         st.session_state.replace_value = None
 
     st.subheader("Preview DataFrame:")
-    st.write(st.session_state.df)
+    st.write(st.session_state.df.head())
 
     while True:
-        st.session_state.choice = st.radio("Select at what level you want to replace a value, Finish for ending the process", ['Specific Column', 'Whole DataFrame', 'Finish'], key='choice')
+        st.session_state.choice = st.radio("Select an option", ['Specific Column', 'Whole DataFrame', 'Finish'])
 
         if st.session_state.choice == 'Specific Column':
             st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):", key='column_name')
