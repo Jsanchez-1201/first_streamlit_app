@@ -544,22 +544,22 @@ def search_replace(df):
             if st.session_state.column_name and st.session_state.column_name.lower() != 'finish' and st.session_state.column_name in st.session_state.df.columns:
                 st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
                 st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
-                st.form_submit_button("Replace Value")
-                st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-                st.write(f"Value replaced in {st.session_state.column_name}")
-            elif st.session_state.column_name.lower() == 'finish':
-                st.form_submit_button("Finish")
-            elif st.session_state.column_name:
-                st.warning(f"Column '{st.session_state.column_name}' not found in DataFrame. Please enter a valid column name.")
         elif st.session_state.choice == 'Whole DataFrame':
             st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_df')
             st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_df')
-            st.form_submit_button("Replace Value")
-            st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-            st.write("Values replaced in the whole DataFrame")
-        elif st.session_state.choice == 'Finish':
-            st.form_submit_button("Finish")
-        
+
+        submit_button = st.form_submit_button("Replace Value")
+
+        if submit_button:
+            if st.session_state.choice == 'Specific Column':
+                st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+                st.write(f"Value replaced in {st.session_state.column_name}")
+            elif st.session_state.choice == 'Whole DataFrame':
+                st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+                st.write("Values replaced in the whole DataFrame")
+            elif st.session_state.choice == 'Finish':
+                st.success('Replace process finished')
+
     st.subheader("DataFrame after replacement:")
     st.write(st.session_state.df)
 
