@@ -537,31 +537,35 @@ def search_replace(df):
     st.write(st.session_state.df)
 
     with st.form(key='replace_form'):
-        st.session_state.choice = st.radio("Select at what level you want to replace a value:", ['Specific Column', 'Whole DataFrame', 'Finish'])
+        st.session_state.choice = st.selectbox("Select at what level you want to replace a value:",
+                                               options=['Specific Column', 'Whole DataFrame', 'Finish'])
 
         if st.session_state.choice == 'Specific Column':
-            st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):", key='column_name')
+            st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):",
+                                                         key='column_name')
             if st.session_state.column_name and st.session_state.column_name.lower() != 'finish' and st.session_state.column_name in st.session_state.df.columns:
                 st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
                 st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
+
         elif st.session_state.choice == 'Whole DataFrame':
             st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_df')
             st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_df')
 
         submit_button = st.form_submit_button("Replace Value")
 
-        if submit_button:
-            if st.session_state.choice == 'Specific Column':
-                st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-                st.write(f"Value replaced in {st.session_state.column_name}")
-            elif st.session_state.choice == 'Whole DataFrame':
-                st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-                st.write("Values replaced in the whole DataFrame")
-            elif st.session_state.choice == 'Finish':
-                st.success('Replace process finished')
+    if submit_button:
+        if st.session_state.choice == 'Specific Column':
+            st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+            st.write(f"Value replaced in {st.session_state.column_name}")
+        elif st.session_state.choice == 'Whole DataFrame':
+            st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+            st.write("Values replaced in the whole DataFrame")
+        elif st.session_state.choice == 'Finish':
+            st.success('Replace process finished')
 
     st.subheader("DataFrame after replacement:")
     st.write(st.session_state.df)
+
 
 
 def render_page_main():
