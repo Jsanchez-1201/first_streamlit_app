@@ -550,7 +550,7 @@ def search_replace(df):
             with st.form(key = 'specific_column_form'):
                 st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
                 st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
-                submitted = st.form_submit_button('Replace', key = "specific_column_replace")    
+                submitted = st.form_submit_button('Replace')    
                 if submitted:
                     st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
                     st.write(f"Value replaced in {st.session_state.column_name}")
