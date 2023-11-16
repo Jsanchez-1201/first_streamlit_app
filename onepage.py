@@ -516,7 +516,7 @@ def splitting(df, column_to_split, character):
     
     return st.session_state
 
-def search_replace():
+def search_replace(df):
     if 'df' not in st.session_state:
         st.error("DataFrame not found in session state. Please upload or create a DataFrame in the previous steps.")
         return
