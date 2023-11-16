@@ -534,7 +534,7 @@ def search_replace(df):
         st.session_state.replace_value = None
 
     st.subheader("Preview DataFrame:")
-    st.write(st.session_state.df.head())
+    st.write(st.session_state.df)
 
     while True:
         st.session_state.choice = st.radio("Select an option", ['Specific Column', 'Whole DataFrame', 'Finish'])
