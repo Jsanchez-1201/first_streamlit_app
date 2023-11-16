@@ -547,10 +547,13 @@ def search_replace(df):
     if st.session_state.choice == 'Specific Column':
         st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):", key='Columnas')
         if st.session_state.column_name and st.session_state.column_name.lower() != 'finish' and st.session_state.column_name in st.session_state.df.columns:
-            st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
-            st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
-            st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-            st.write(f"Value replaced in {st.session_state.column_name}")
+            with st.form(key = 'specific_column_form'):
+                st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
+                st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
+                submitted = st.form_submit_button('Replace', key = "specific_column_replace")    
+                if submitted:
+                    st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+                    st.write(f"Value replaced in {st.session_state.column_name}")
         # elif st.session_state.column_name.lower() == 'finish':
         #     break
         elif st.session_state.column_name not in st.session_state.df.columns:
