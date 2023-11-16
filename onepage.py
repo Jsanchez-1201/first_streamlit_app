@@ -162,7 +162,6 @@ def process_user_input_changes():
         for column_index in change_columns_list:
             if 0 <= column_index < len(matched_columns):
                 selected_column = list(matched_columns.keys())[column_index]
-                selected_columntemp = df.columns.tolist()[column_index]
                 st.write(f"Mapping options for column {column_index}: '{selected_column}':")
                 for j, (match, score) in enumerate(matched_columns[selected_column]):
                     st.write(f"  {j}. Map to '{match}' (Score: {score})")
@@ -172,9 +171,8 @@ def process_user_input_changes():
                     match_index = int(match_choice)
                     if 0 <= match_index < len(matched_columns[selected_column]):
                         chosen_mapping = matched_columns[selected_column][match_index][0]
-                        st.session_state.df.rename(columns={selected_columntemp: chosen_mapping}, inplace=True)
-                        selected_columntemp = df.columns.tolist()[column_index]
-                        st.write(f"Column {column_index}: '{selected_columntemp}' has been mapped to '{chosen_mapping}'.")
+                        st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                        st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
                         st.write("No changes have been made to the columns.")
                 else:
@@ -289,14 +287,12 @@ def perform_clustering(data, header_name):
     return clusters, old_names
 
 def move_cluster(item_to_move, from_cluster_id, to_cluster_id):
+    
     clusters = st.session_state.clusters
-    item_to_move = st.session_state.item_to_move
-    from_cluster_id = st.session_state.from_cluster_id
-    to_cluster_id = st.session_state.to_cluster_id
 
-    if item_to_move in clusters[from_cluster_id]:
-        clusters[from_cluster_id].remove(item_to_move)
-        clusters[to_cluster_id].append(item_to_move)
+    if item_to_move in clusters[int(from_cluster_id)]:
+        clusters[int(to_cluster_id)].append(item_to_move)
+        clusters[int(from_cluster_id)].remove(item_to_move)
 
     st.session_state.clusters = clusters
 
@@ -304,33 +300,33 @@ def move_cluster(item_to_move, from_cluster_id, to_cluster_id):
         st.write(f"Cluster {cluster_label}: {cluster_items}")
 
 def merge_clusters(cluster1_id, cluster2_id):
+    
     clusters = st.session_state.clusters
-    cluster1_id = st.session_state.cluster1_id
-    cluster2_id = st.session_state.cluster2_id
 
-    clusters[cluster1_id] += clusters[cluster2_id]
-    # clusters(Merge(dict1, dict2))
-    del clusters[cluster2_id]
+    clusters[int(cluster1_id)] += clusters[int(cluster2_id)]
+    del clusters[int(cluster2_id)]
 
     st.session_state.clusters = clusters
-    clusters = st.session_state.clusters
-    
-    st.write(clusters)
 
-    # for cluster_label, cluster_items in clusters.items():
-    #     st.write(f"Cluster {cluster_label}: {cluster_items}")
+    for cluster_label, cluster_items in clusters.items():
+        st.write(f"Cluster {cluster_label}: {cluster_items}")
 
 def split_cluster(cluster_id, item_to_split):
+    
     clusters = st.session_state.clusters
 
-    if item_to_split in clusters[cluster_id]:
-        clusters[cluster_id].remove(item_to_split)
+    if item_to_split in clusters[int(cluster_id)]:
+        clusters[int(cluster_id)].remove(item_to_split)
         new_cluster_id = max(clusters.keys()) + 1
         clusters[new_cluster_id] = [item_to_split]
 
     st.session_state.clusters = clusters
 
+    for cluster_label, cluster_items in clusters.items():
+        st.write(f"Cluster {cluster_label}: {cluster_items}")
+
 def create_cluster(new_item):
+    
     clusters = st.session_state.clusters
     
     new_cluster_id = max(clusters.keys()) + 1
@@ -338,14 +334,21 @@ def create_cluster(new_item):
 
     st.session_state.clusters = clusters
 
+    for cluster_label, cluster_items in clusters.items():
+        st.write(f"Cluster {cluster_label}: {cluster_items}")
+
 def replace_cluster(edit_cluster, name_to_edit):
+    
     clusters = st.session_state.clusters
 
-    for item in clusters[edit_cluster]:
+    for item in clusters[int(edit_cluster)]:
         if item != name_to_edit:
-          clusters[edit_cluster][clusters[edit_cluster].index(item)] = name_to_edit
+          clusters[int(edit_cluster)][clusters[int(edit_cluster)].index(item)] = name_to_edit
     
     st.session_state.clusters = clusters
+
+    for cluster_label, cluster_items in clusters.items():
+        st.write(f"Cluster {cluster_label}: {cluster_items}")
 
 def editing_cluster(clusters, old_names, data, header_name):
     
@@ -466,16 +469,17 @@ def editing_cluster(clusters, old_names, data, header_name):
             st.session_state["Save Changes"] = not st.session_state["Save Changes"]
 
         if st.session_state["Save Changes"]:
-            
+            # st.write(clusters)
+            # st.write(old_names)
             data[header_name] = data[header_name].str.lower()
             for clusters_key, clusters_items in old_names.items():        
                 for item in clusters_items:
-                    data = data.replace(item, clusters[clusters_key][0])
+                    data = data.replace(item, clusters[int(clusters_key)][0])
             
-            data = st.session_state.df
+            st.session_state.df = data
             st.write(data)
 
-    return data # this return could retrieves an error
+    return st.session_state.df
 
 def splitting(df, column_to_split, character):
     
@@ -514,7 +518,7 @@ def splitting(df, column_to_split, character):
         
         st.write(st.session_state.df)
     
-    return st.session_state
+    return st.session_state.df
 
 def search_replace(df):
     if 'df' not in st.session_state:
@@ -572,8 +576,6 @@ def search_replace(df):
 
     st.subheader("DataFrame after replacement:")
     st.write(st.session_state.df)
-
-
 
 def render_page_main():
     # Your page code here
@@ -673,8 +675,6 @@ def render_fourth_page():
 
     if st.session_state.df is not None:
         search_replace(st.session_state.df)
-        
-    # Your page code here
 
 #Based on page number render required contents
 def render_page(page_number):
