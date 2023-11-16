@@ -563,7 +563,7 @@ def search_replace(df):
             st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_df')
             st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_df')
             submitted_whole = st.form_submit_button('Replace')
-            if submitted: 
+            if submitted_whole: 
                 st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
                 st.write("Values replaced in the whole DataFrame")
     elif st.session_state.choice == 'Finish':
