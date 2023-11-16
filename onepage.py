@@ -536,28 +536,28 @@ def search_replace(df):
     st.subheader("Preview DataFrame:")
     st.write(st.session_state.df)
 
-    while True:
-        st.session_state.choice = st.radio("Select the level you want to change the value from, Finish to end the process", ['Specific Column', 'Whole DataFrame', 'Finish'], key = 'level_radio1' )
+    
+    st.session_state.choice = st.radio("Select the level you want to change the value from, Finish to end the process", ['Specific Column', 'Whole DataFrame', 'Finish'], key = 'level_radio1' )
 
-        if st.session_state.choice == 'Specific Column':
-            st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):", key='Columnas')
-            if st.session_state.column_name and st.session_state.column_name.lower() != 'finish' and st.session_state.column_name in st.session_state.df.columns:
-                st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
-                st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
-                st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-                st.write(f"Value replaced in {st.session_state.column_name}")
-            elif st.session_state.column_name.lower() == 'finish':
-                break
-            elif st.session_state.column_name:
-                st.warning(f"Column '{st.session_state.column_name}' not found in DataFrame. Please enter a valid column name.")
-        elif st.session_state.choice == 'Whole DataFrame':
-            st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_df')
-            st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_df')
-            st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-            st.write("Values replaced in the whole DataFrame")
-        elif st.session_state.choice == 'Finish':
-            st.success('Replace process finished')
-            break
+    if st.session_state.choice == 'Specific Column':
+        st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):", key='Columnas')
+        if st.session_state.column_name and st.session_state.column_name.lower() != 'finish' and st.session_state.column_name in st.session_state.df.columns:
+            st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
+            st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
+            st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+            st.write(f"Value replaced in {st.session_state.column_name}")
+        # elif st.session_state.column_name.lower() == 'finish':
+        #     break
+        elif st.session_state.column_name not in st.session_state.df.columns:
+            st.warning(f"Column '{st.session_state.column_name}' not found in DataFrame. Please enter a valid column name.")
+    elif st.session_state.choice == 'Whole DataFrame':
+        st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_df')
+        st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_df')
+        st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
+        st.write("Values replaced in the whole DataFrame")
+    elif st.session_state.choice == 'Finish':
+        st.success('Replace process finished')
+        #break
 
     st.subheader("DataFrame after replacement:")
     st.write(st.session_state.df)
