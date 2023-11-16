@@ -537,7 +537,7 @@ def search_replace(df):
     st.write(st.session_state.df)
 
     while True:
-        st.session_state.choice = st.radio("Select the level ypu want to change the value from, Finish to end the process", ['Specific Column', 'Whole DataFrame', 'Finish'])
+        st.session_state.choice = st.radio("Select the level you want to change the value from, Finish to end the process", ['Specific Column', 'Whole DataFrame', 'Finish'], key = 'level' )
 
         if st.session_state.choice == 'Specific Column':
             st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):", key='Columnas')
