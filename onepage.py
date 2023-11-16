@@ -542,10 +542,7 @@ def search_replace(df):
     
     st.subheader("Preview DataFrame:")
     st.write(st.session_state.preview_dataframe)
-    st.write(st.session_state.find_value)
-    st.write(st.session_state.replace_value)
-    st.write(st.session_state.column_name)
-    
+  
     st.session_state.choice = st.radio("Select the level you want to change the value from, Finish to end the process", ['Specific Column', 'Whole DataFrame', 'Finish'], key = 'level_radio1' )
 
     if st.session_state.choice == 'Specific Column':
