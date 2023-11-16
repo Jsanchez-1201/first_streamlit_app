@@ -533,9 +533,14 @@ def search_replace(df):
     if 'replace_value' not in st.session_state:
         st.session_state.replace_value = None
 
+    if 'preview_dataframe' not in st.session_state:
+        st.session_state.preview_dataframe = st.session_state.df
+    
     st.subheader("Preview DataFrame:")
-    st.write(st.session_state.df)
-
+    st.write(st.session_state.preview_dataframe)
+    st.write(st.session_state.find_value)
+    st.write(st.session_state.replace_value)
+    st.write(st.session_state.column_name)
     
     st.session_state.choice = st.radio("Select the level you want to change the value from, Finish to end the process", ['Specific Column', 'Whole DataFrame', 'Finish'], key = 'level_radio1' )
 
