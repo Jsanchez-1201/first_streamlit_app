@@ -115,7 +115,7 @@ def match_columns(df, reference_columns):
     matched_columns = {}
     input_columns = df.columns.tolist()
     for column in input_columns:
-        matches = fuzz.extractBests(column, reference_columns)
+        matches = fuzz.extract(column, reference_columns)
         if matches:
             matched_columns[column] = matches
     return matched_columns
