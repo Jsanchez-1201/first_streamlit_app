@@ -123,12 +123,10 @@ def match_columns(df, reference_columns):
 def perform_initial_mapping():
     matched_columns = match_columns(st.session_state.df, st.session_state.reference_columns)
     st.session_state.mapped_columns = matched_columns
-    unique_identifier = 1
     for column, mapping in matched_columns.items():
         new_column_name = mapping[0][0]
         while new_column_name in st.session_state.df.columns:
-            new_column_name = f"{mapping[0][0]}_{unique_identifier}"
-            unique_identifier += 1
+            new_column_name = f"{mapping[0][0]}"
         st.session_state.df.rename(columns={column: new_column_name}, inplace=True)
 
 def display_mapped_columns():
@@ -667,11 +665,18 @@ def render_third_page():
         
         splitting(st.session_state.df, column_to_split, character)
     
-def render_fourth_page():
-    st.title("Find and Replace Function")
+def render_third_page():
+    
+    st.title("Splitting Columns")
 
     if st.session_state.df is not None:
-        search_replace(st.session_state.df)
+        column_to_split = st.text_input("Select the column you want to split:", key="column_to_split_input")
+        character = st.text_input("Select the character you want to split by:", key="character_input")
+        
+        if not character:
+            pass
+        else:
+            splitting(st.session_state.df, column_to_split, character)
 
 #Based on page number render required contents
 def render_page(page_number):
