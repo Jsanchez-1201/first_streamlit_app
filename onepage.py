@@ -678,6 +678,13 @@ def render_third_page():
         else:
             splitting(st.session_state.df, column_to_split, character)
 
+def render_fourth_page():
+    st.title("Find and Replace Function")
+
+    if st.session_state.df is not None:
+        search_replace(st.session_state.df)
+
+
 #Based on page number render required contents
 def render_page(page_number):
 
