@@ -575,8 +575,6 @@ def render_page_main():
             df = pd.read_csv(uploaded_file) # Read CSV file
         else:
             st.error(f"Unsupported file type: {file_extension}. Please upload an Excel (xlsx/xls) or CSV file.")
-        st.subheader("Data preview:")
-        st.write(st.session_state.df)
 
         if reference_file is not None:
             with reference_file as file:
@@ -584,6 +582,9 @@ def render_page_main():
                     reference_columns = yaml.safe_load(file) # fix the error with the variable
                 except Exception as e:
                     st.error(f"Error loading reference columns: {str(e)}")
+    st.subheader("Data preview:")
+    st.write(st.session_state.df)
+
     
     if st.button("Continue with Default YAML"):
         st.session_state.df = df
