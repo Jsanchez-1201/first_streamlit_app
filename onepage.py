@@ -277,11 +277,12 @@ def perform_clustering(data, header_name):
         label_key = int(label) # convert numpy.int64 to int
         clusters[label_key].append(data[header_name].iloc[i])
         old_names[label_key].append(data[header_name].iloc[i])
+    clusters = dict((k, [x.lower() for x in v]) for k,v in clusters.items())
+    old_names = dict((k, [x.lower() for x in v]) for k,v in clusters.items())
     st.session_state.clusters = clusters
     st.session_state.old_names = old_names
-    clusters = dict((k, [x.lower() for x in v]) for k,v in clusters.items())
-    #st.write(clusters)
-    return clusters, old_names
+    # st.write(clusters)
+    return st.session_state.clusters, st.session_state.old_names
 def merge_clusters(cluster1_id, cluster2_id):
     
     clusters = st.session_state.clusters
