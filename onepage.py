@@ -615,29 +615,23 @@ def render_first_page():
     return st.session_state.df
 
 def render_second_page():
-
     st.title("Clustering Functions")
-
+    st.write("The purpose of this function is to group similar data in order the user can edit typo corrections without the need to provide a specific input.")
     if st.session_state.df is not None:
+        st.write(st.session_state.df.columns) # fix the UI
         header_name = st.text_input("Enter the Header Name:", key="header_name_input")
         submit_button = st.button("Compute Clustering")
-
         if submit_button:
             st.session_state.header_name = header_name
             clusters, old_names = perform_clustering(st.session_state.df, header_name)
-
         clusters = st.session_state.clusters
         old_names = st.session_state.old_names
-
         # Display the clustering results
         st.write("Current Clusters:")
         for cluster_label, cluster_items in clusters.items():
             st.write(f"Cluster {cluster_label}: {cluster_items}")
-    
     clean_data = editing_cluster(clusters, old_names, st.session_state.df, header_name)
-    
     st.session_state.df = clean_data
-
     return st.session_state.df # idk if it makes sense
 
 def render_third_page():
