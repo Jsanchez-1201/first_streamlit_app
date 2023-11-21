@@ -268,35 +268,19 @@ def compute_distance_matrix(data, header_name):
 def perform_clustering(data, header_name):
     distance_matrix = compute_distance_matrix(data, header_name)
     st.session_state.distance_matrix = distance_matrix
-    
     dbscan = DBSCAN(eps=0.05, min_samples=1, metric="cosine")
     labels = dbscan.fit_predict(distance_matrix)
-
     clusters = defaultdict(list)
     old_names = defaultdict(list)
     for i, label in enumerate(labels):
         label_key = int(label) # convert numpy.int64 to int
         clusters[label_key].append(data[header_name].iloc[i])
         old_names[label_key].append(data[header_name].iloc[i])
-
     st.session_state.clusters = clusters
     st.session_state.old_names = old_names
-
+    clusters = dict((k, [x.lower() for x in v]) for k,v in clusters.items())
+    st.write(clusters)
     return clusters, old_names
-
-def move_cluster(item_to_move, from_cluster_id, to_cluster_id):
-    
-    clusters = st.session_state.clusters
-
-    if item_to_move in clusters[int(from_cluster_id)]:
-        clusters[int(to_cluster_id)].append(item_to_move)
-        clusters[int(from_cluster_id)].remove(item_to_move)
-
-    st.session_state.clusters = clusters
-
-    for cluster_label, cluster_items in clusters.items():
-        st.write(f"Cluster {cluster_label}: {cluster_items}")
-
 def merge_clusters(cluster1_id, cluster2_id):
     
     clusters = st.session_state.clusters
