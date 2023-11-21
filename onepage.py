@@ -280,7 +280,7 @@ def perform_clustering(data, header_name):
     st.session_state.clusters = clusters
     st.session_state.old_names = old_names
     clusters = dict((k, [x.lower() for x in v]) for k,v in clusters.items())
-    st.write(clusters)
+    #st.write(clusters)
     return clusters, old_names
 def merge_clusters(cluster1_id, cluster2_id):
     
