@@ -586,7 +586,8 @@ def render_page_main():
     if st.button("Continue with Default YAML"):
         st.session_state.df = df
         st.session_state.reference_columns = default_reference_columns
-
+st.subheader("Data preview:")
+st.write(st.session_state.df)
 st.session_state.df = df
 st.session_state.reference_columns = reference_columns
 
