@@ -211,9 +211,10 @@ def split_name(df):
         new = df["First Name"].str.split(" ", n=1, expand = True)
         df["First Name"] = new[0]
         df["Last Name"] = new[1]
+        return df
     else:
         st.write("This database already has both Name and Last Name in different columns.")
-    return df
+    
     
 def validate_names(data):
     data_temp = data
