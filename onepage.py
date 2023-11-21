@@ -207,7 +207,7 @@ def job_title(df):
     
 def split_name(df):
     if df['Last Name'].isnull().values.any() == True:
-        df = df.replace('[-| .,\/_]+',' ', regex = True)
+        df = df.replace('[-|.,\/_]+',' ', regex = True)
         new = df["First Name"].str.split(" ", n=1, expand = True)
         df["First Name"] = new[0]
         df["Last Name"] = new[1]
