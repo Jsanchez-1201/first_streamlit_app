@@ -610,8 +610,8 @@ def render_first_page():
             validate_names(data)
             validate_emails(data)
             map_work_columns(data)
-            st.subheader("Updated data:")
-            st.write(st.session_state.df)
+        st.subheader("Updated data:")
+        st.write(st.session_state.df)
     return st.session_state.df
 
 def render_second_page():
