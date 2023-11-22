@@ -587,7 +587,8 @@ def render_page_main():
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
                 st.session_state.reference_columns = default_reference_columns
-        
+    else:
+            st.session_state.reference_columns = default_reference_columns 
 
     #     if reference_file is not None:
     #         with reference_file as file:
