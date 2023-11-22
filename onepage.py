@@ -456,7 +456,7 @@ def editing_cluster(clusters, old_names, data, header_name):
             data[header_name] = data[header_name].str.lower()
             for clusters_key, clusters_items in old_names.items():        
                 for item in clusters_items:
-                    data = data.replace(item, clusters[int(clusters_key)][0])
+                    data = data.replace(item, clusters[clusters_key][0])
             
             st.session_state.df = data
             st.write(data)
