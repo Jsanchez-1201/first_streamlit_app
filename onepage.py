@@ -580,7 +580,7 @@ def render_page_main():
         if reference_file is not None:
             with reference_file as file:
                 try:
-                    reference_columns = yaml.safe_load(file) # fix the error with the variable
+                   st.session_state.reference_columns = yaml.safe_load(file) # fix the error with the variable
                 except Exception as e:
                     st.error(f"Error loading reference columns: {str(e)}")
     st.subheader("Data preview:")
