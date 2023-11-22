@@ -195,9 +195,9 @@ def update_dataframe():
 # Apply automatic functions
 def job_title(df):
     mask = df['Title'].apply(lambda x: len(str(x))!=0)
-    df['Ttile_validation'] = ''
-    df['Ttile_validation'][mask == True] = 'Valid'
-    df['Ttile_validation'][mask == False] = 'Invalid'
+    df['Title_validation'] = ''
+    df['Title_validation'][mask == True] = 'Valid'
+    df['Title_validation'][mask == False] = 'Invalid'
     return df
     
 def split_name(df):
