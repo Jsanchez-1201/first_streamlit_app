@@ -241,9 +241,7 @@ def validate_emails(df):
     for column in email_columns:
         column_name = f'{column} Validation'
         df[column_name] = df[column].apply(lambda email: bool(re.match(pattern, email)))
-        invalid_domains = ['gmail.com', 'hotmail.com']
-        df[column_name] &= ~df[column].str.lower().str.endswith(tuple(invalid_domains))
-        #df[column_name] = df[column_name].apply(lambda is_valid: 'Valid' if is_valid else 'Invalid')
+        df[column_name] = df[column_name].apply(lambda is_valid: 'Valid' if is_valid else 'Invalid')
     # Display the modified DataFrame
     return df
 
