@@ -177,6 +177,10 @@ def process_user_input_changes():
                     st.write("Invalid input. Please enter a valid number or 'skip'.")
 
 def update_dataframe():
+    if st.session_state.df is None:
+        st.warning("DataFrame is not available.")
+        return
+
     if "Last Name" not in st.session_state.df.columns:
         st.session_state.df["Last Name"] = ""
 
@@ -188,7 +192,6 @@ def update_dataframe():
 
     st.session_state.df = updated_df
     return updated_df
-
 # Apply automatic functions
 def job_title(df):
     mask = df['Title'].apply(lambda x: len(str(x))!=0)
