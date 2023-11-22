@@ -323,6 +323,15 @@ def replace_cluster(edit_cluster, name_to_edit):
     for cluster_label, cluster_items in clusters.items():
         st.write(f"Cluster {cluster_label}: {cluster_items}")
 
+def move_cluster(item_to_move, from_cluster_id, to_cluster_id):
+    clusters = st.session_state.clusters
+    if item_to_move in clusters[int(from_cluster_id)]:
+        clusters[int(to_cluster_id)].append(item_to_move)
+        clusters[int(from_cluster_id)].remove(item_to_move)
+    st.session_state.clusters = clusters
+    for cluster_label, cluster_items in clusters.items():
+        st.write(f"Cluster {cluster_label}: {cluster_items}")
+
 def editing_cluster(clusters, old_names, data, header_name):
     
     clusters = st.session_state.clusters
