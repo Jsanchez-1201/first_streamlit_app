@@ -226,7 +226,10 @@ def validate_emails(df):
         column_name = f'{column} Validation'
         df[column_name] = df[column].apply(lambda email: bool(re.match(pattern, email)))
         invalid_domains = ['gmail.com', 'hotmail.com']
-        df[column_name] &= ~df[column].str.lower().str.endswith(tuple(invalid_domains))
+        invalid_domains = ['gmail.com', 'hotmail.com']
+        is_valid_domain = ~df[column].str.lower().str.endswith(tuple(invalid_domains))
+        df[column_name] = np.where(is_valid_pattern & is_valid_domain, 'Valid', 'Invalid')
+        #df[column_name] &= ~df[column].str.lower().str.endswith(tuple(invalid_domains))
         #df[column_name] = df[column_name].apply(lambda is_valid: 'Valid' if is_valid else 'Invalid')
     # Display the modified DataFrame
     return df
