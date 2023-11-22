@@ -191,7 +191,7 @@ def update_dataframe():
 
 # Apply automatic functions
 def job_title(df):
-    mask = df['Title'].apply(lambda x: len(x)!=0)
+    mask = df['Title'].apply(lambda x: len(str(x))!=0)
     df['Ttile_validation'] = ''
     df['Ttile_validation'][mask == True] = 'Valid'
     df['Ttile_validation'][mask == False] = 'Invalid'
