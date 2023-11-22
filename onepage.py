@@ -578,26 +578,26 @@ def render_page_main():
         else:
             st.error(f"Unsupported file type: {file_extension}. Please upload an Excel (xlsx/xls) or CSV file.")
 
+    # if reference_file is not None:
+    #     with reference_file as file:
+    #         try:
+    #             st.session_state.reference_columns = yaml.safe_load(file)
+    #             if st.session_state.reference_columns is None:
+    #                 st.session_state.reference_columns = default_reference_columns
+    #         except Exception as e:
+    #             st.error(f"Error loading reference columns: {str(e)}")
+    #             st.session_state.reference_columns = default_reference_columns
+    # else:
+    #         st.session_state.reference_columns = default_reference_columns 
+
     if reference_file is not None:
         with reference_file as file:
             try:
-                st.session_state.reference_columns = yaml.safe_load(file)
-                if st.session_state.reference_columns is None:
-                    st.session_state.reference_columns = default_reference_columns
+                st.session_state.reference_columns = yaml.safe_load(file) # fix the error with the variable
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
-                st.session_state.reference_columns = default_reference_columns
-    else:
-            st.session_state.reference_columns = default_reference_columns 
-
-    #     if reference_file is not None:
-    #         with reference_file as file:
-    #             try:
-    #                st.session_state.reference_columns = yaml.safe_load(file) # fix the error with the variable
-    #             except Exception as e:
-    #                 st.error(f"Error loading reference columns: {str(e)}")
-    # st.subheader("Data preview:")
-    # st.write(st.session_state.df)
+    st.subheader("Data preview:")
+    st.write(st.session_state.df)
 
     
     if st.button("Continue with Default YAML"):
