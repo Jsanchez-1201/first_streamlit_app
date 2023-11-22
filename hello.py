@@ -51,3 +51,19 @@ if st.button("Next page"):
         st.experimental_rerun()
 if st.session_state.df is not None and st.session_state.reference_columns:
     page1.page_1()
+
+
+
+def update_dataframe():
+    if "Last Name" not in st.session_state.df.columns:
+        st.session_state.df["Last Name"] = ""
+
+    updated_df = st.session_state.df.copy()
+    updated_df["Last Name"] = st.session_state.df["Last Name"]  # Modify the copy
+
+    st.subheader('Updated DataFrame:')
+    st.write(updated_df)
+
+    st.session_state.df = updated_df
+    return updated_df
+
