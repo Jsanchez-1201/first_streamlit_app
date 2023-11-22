@@ -191,19 +191,11 @@ def update_dataframe():
 
 # Apply automatic functions
 def job_title(df):
-    try:
-        missing_job = df['Title'].isna().sum()
-        count = df['Title'].count() + missing_job
-        percentage = (missing_job/count)
-        if percentage <= 0.25:
-            df = df[df['Title'].notna()]
-            st.write ('All the records with missing information were deleted. Job Title has their 75% with valid information.')
-        else:
-            st.write('In this dataset, less than 75% does not have Job Title completed')
-        return df
-    except OSError as e:
-            print(f"Unable to open {df} because: {e}", file=sys.stderr)
-            return
+    mask = df['Title'].apply(lambda x: len(x)!=0)
+    df['Ttile_validation'] = ''
+    df['Ttile_validation'][mask == True] = 'Valid'
+    df['Ttile_validation'][mask == False] = 'Invalid'
+    return df
     
 def split_name(df):
     if df['Last Name'].isnull().values.any() == False:
@@ -217,19 +209,11 @@ def split_name(df):
     
     
 def validate_names(data):
-    data_temp = data
-    data = data[data['First Name'].notna()]
     lenght = data['First Name'].str.len()
     mask = lenght >= 2
-    data = data[mask]
-    name_nulls = data_temp['First Name'].isna().sum()
-    count_total_temp = data_temp['First Name'].count() + name_nulls
-    count_rows = data['First Name'].count()
-    percentage = count_rows/count_total_temp
-    if percentage <= 0.25:
-        st.write('All the records with missing information were deleted. Name has their 75% with information.')
-    else:
-        st.write('In this dataset, less than 75% does not have a valid Name')
+    data['Name_validation'] = ''
+    data['Name_validation'][mask == True] = 'Valid'
+    data['Name_validation'][mask == False] = 'Invalid'
     return data
     
 def validate_emails(df):
