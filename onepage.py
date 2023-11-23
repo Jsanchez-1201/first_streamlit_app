@@ -594,8 +594,6 @@ def render_page_main():
                 st.error(f"Error loading reference columns: {str(e)}")
         st.session_state.df = df
     
-    # st.subheader("Data preview:")
-    # st.write(st.session_state.df)
 
     
     if st.button("Continue with Default YAML"):
