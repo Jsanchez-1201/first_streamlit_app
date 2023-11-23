@@ -596,6 +596,8 @@ def render_page_main():
                 st.session_state.reference_columns = yaml.safe_load(file) # fix the error with the variable
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
+        st.session_state.df = df
+    
     st.subheader("Data preview:")
     st.write(st.session_state.df)
 
