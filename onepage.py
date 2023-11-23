@@ -566,59 +566,6 @@ def search_replace(df):
     st.subheader("DataFrame after replacement:")
     st.write(st.session_state.df)
 
-# def search_replace(df):
-#     if 'df' not in st.session_state:
-#         st.error("DataFrame not found in session state. Please upload or create a DataFrame in the previous steps.")
-#         return
-
-#     if 'choice' not in st.session_state:
-#         st.session_state.choice = None
-
-#     if 'column_name' not in st.session_state:
-#         st.session_state.column_name = None
-
-#     if 'find_value' not in st.session_state:
-#         st.session_state.find_value = None
-
-#     if 'replace_value' not in st.session_state:
-#         st.session_state.replace_value = None
-
-#     if 'preview_dataframe' not in st.session_state:
-#         st.session_state.preview_dataframe = st.session_state.df
-    
-#     st.subheader("Preview DataFrame:")
-#     st.write(st.session_state.preview_dataframe)
-  
-#     st.session_state.choice = st.radio("Select the level you want to change the value from, Finish to end the process", ['Specific Column', 'Whole DataFrame', 'Finish'], key = 'level_radio1' )
-
-#     if st.session_state.choice == 'Specific Column':
-#         st.session_state.column_name = st.text_input("Enter the column name in which to replace the value (or 'Finish' to exit):", key='Columnas')
-#         if st.session_state.column_name and st.session_state.column_name.lower() != 'finish' and st.session_state.column_name in st.session_state.df.columns:
-#             with st.form(key = 'specific_column_form'):
-#                 st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_col')
-#                 st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_col')
-#                 submitted = st.form_submit_button('Replace')    
-#                 if submitted:
-#                     st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-#                     st.write(f"Value replaced in {st.session_state.column_name}")
-#         # elif st.session_state.column_name.lower() == 'finish':
-#         #     break
-#         elif st.session_state.column_name not in st.session_state.df.columns or st.session_state.column_name in [' ', '']:
-#             st.warning(f"Column '{st.session_state.column_name}' not found in DataFrame. Please enter a valid column name.")
-#     elif st.session_state.choice == 'Whole DataFrame':
-#         with st.form(key = 'whole_dataframe_form'):
-#             st.session_state.find_value = st.text_input("Enter the value to find:", key='find_value_df')
-#             st.session_state.replace_value = st.text_input("Enter the value to replace it with:", key='replace_value_df')
-#             submitted_whole = st.form_submit_button('Replace')
-#             if submitted_whole: 
-#                 st.session_state.df.replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-#                 st.write("Values replaced in the whole DataFrame")
-#     elif st.session_state.choice == 'Finish':
-#         st.success('Replace process finished')
-#         #break
-
-#     st.subheader("DataFrame after replacement:")
-#     st.write(st.session_state.df)
 
 def render_page_main():
     # Your page code here
@@ -639,18 +586,6 @@ def render_page_main():
         else:
             st.error(f"Unsupported file type: {file_extension}. Please upload an Excel (xlsx/xls) or CSV file.")
 
-    # if reference_file is not None:
-    #     with reference_file as file:
-    #         try:
-    #             st.session_state.reference_columns = yaml.safe_load(file)
-    #             if st.session_state.reference_columns is None:
-    #                 st.session_state.reference_columns = default_reference_columns
-    #         except Exception as e:
-    #             st.error(f"Error loading reference columns: {str(e)}")
-    #             st.session_state.reference_columns = default_reference_columns
-    # else:
-    #         st.session_state.reference_columns = default_reference_columns 
-
     if reference_file is not None:
         with reference_file as file:
             try:
@@ -659,13 +594,15 @@ def render_page_main():
                 st.error(f"Error loading reference columns: {str(e)}")
         st.session_state.df = df
     
-    st.subheader("Data preview:")
-    st.write(st.session_state.df)
+    # st.subheader("Data preview:")
+    # st.write(st.session_state.df)
 
     
     if st.button("Continue with Default YAML"):
         st.session_state.df = df
         st.session_state.reference_columns = default_reference_columns
+    st.subheader("Data preview:")
+    st.write(st.session_state.df)
 
 st.session_state.df = df
 st.session_state.reference_columns = reference_columns
