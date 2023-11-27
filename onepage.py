@@ -49,8 +49,6 @@ if 'from_cluster_id' not in st.session_state:
     st.session_state.from_cluster_id = 'none'
 if 'to_cluster_id' not in st.session_state:
     st.session_state.from_cluster_id = 'none'
-# if 'editing_clusters' not in st.session_state:
-#     st.session_state.editing_clusters = {}
 if 'cluster1_id' not in st.session_state:
     st.session_state.cluster1_id = 'none'
 if 'cluster2_id' not in st.session_state:
@@ -123,10 +121,12 @@ def match_columns(df, reference_columns):
 def perform_initial_mapping():
     matched_columns = match_columns(st.session_state.df, st.session_state.reference_columns)
     st.session_state.mapped_columns = matched_columns
+    # unique_identifier = 1
     for column, mapping in matched_columns.items():
         new_column_name = mapping[0][0]
         while new_column_name in st.session_state.df.columns:
-            new_column_name = f"{mapping[0][0]}"
+            new_column_name = f"{mapping[0][0]}" # _{unique_identifier}
+            # unique_identifier += 1
         st.session_state.df.rename(columns={column: new_column_name}, inplace=True)
 
 def display_mapped_columns():
@@ -177,10 +177,6 @@ def process_user_input_changes():
                     st.write("Invalid input. Please enter a valid number or 'skip'.")
 
 def update_dataframe():
-    if st.session_state.df is None:
-        st.warning("DataFrame is not available.")
-        return
-
     if "Last Name" not in st.session_state.df.columns:
         st.session_state.df["Last Name"] = ""
 
@@ -192,34 +188,45 @@ def update_dataframe():
 
     st.session_state.df = updated_df
     return updated_df
+
 # Apply automatic functions
 def job_title(df):
-    mask = df['Title'].apply(lambda x: len(str(x))!=0)
-    df['Title_validation'] = ''
-    df['Title_validation'][mask == True] = 'Valid'
-    df['Title_validation'][mask == False] = 'Invalid'
-    return df
+    try:
+        # df.Title.fillna('', inplace=True)
+        mask = df['Title'].apply(lambda x: len(str(x)) != 0)
+        df['Title_validation'] = ''
+        df['Title_validation'][mask == True] = 'Valid'
+        df['Title_validation'][mask == False] = 'Invalid'
+        return df
+    except:
+        st.write("Please ensure that the designated column is labeled 'Title'. Kindly select the appropriate option prior to rerunning the process.")
     
 def split_name(df):
-    if df['Last Name'].isnull().values.any() == False:
-        df["First Name"] = df["First Name"].replace('[-| .,\/_]+',' ', regex = True)
-        new = df["First Name"].str.split(" ", n=1, expand = True)
-        df["First Name"] = new[0]
-        df["Last Name"] = new[1]
-        return df
-    else:
-        st.write("This database already has both Name and Last Name in different columns.")
-    
-    
+    try:
+        if df['Last Name'].isnull().values.any() == False:
+            df["First Name"] = df["First Name"].replace('[-| .,\/_]+',' ', regex = True)
+            new = df["First Name"].str.split(" ", n=1, expand = True)
+            df["First Name"] = new[0]
+            df["Last Name"] = new[1]
+            return df
+        else:
+            st.write("This database already has both Name and Last Name in different columns.")
+    except:
+        st.write("Please ensure that the designated column is labeled 'First Name'. Kindly select the appropriate option prior to rerunning the process.")
+
 def validate_names(data):
-    lenght = data['First Name'].str.len()
-    mask = lenght >= 2
-    data['Name_validation'] = ''
-    data['Name_validation'][mask == True] = 'Valid'
-    data['Name_validation'][mask == False] = 'Invalid'
-    return data
+    try:
+        lenght = data['First Name'].str.len()
+        mask = lenght >= 2
+        data['Name_validation'] = ''
+        data['Name_validation'][mask == True] = 'Valid'
+        data['Name_validation'][mask == False] = 'Invalid'
+        return data
+    except:
+        st.write("Please ensure that the designated column is labeled 'First Name'. Kindly select the appropriate option prior to rerunning the process.")
     
 def validate_emails(df):
+
     # Extracting the Email and Lead Gatherer Email columns
     email_columns = ['Email']
     # Initialize valid email pattern
@@ -232,14 +239,17 @@ def validate_emails(df):
         invalid_domains = ['gmail.com', 'hotmail.com']
         is_valid_domain = ~df[column].str.lower().str.endswith(tuple(invalid_domains))
         df[column_name] = np.where(is_valid_pattern & is_valid_domain, 'Valid', 'Invalid')
-        #df[column_name] &= ~df[column].str.lower().str.endswith(tuple(invalid_domains))
-        #df[column_name] = df[column_name].apply(lambda is_valid: 'Valid' if is_valid else 'Invalid')
     # Display the modified DataFrame
     return df
+
 
 def map_work_columns(data):
     data.columns = data.columns.str.replace('Work ', '')
     return data
+
+def clean_none(df):
+    df.fillna('', inplace=True)
+    return df
 
 df = st.session_state.df
 reference_columns = st.session_state.reference_columns
@@ -261,20 +271,37 @@ def compute_distance_matrix(data, header_name):
 def perform_clustering(data, header_name):
     distance_matrix = compute_distance_matrix(data, header_name)
     st.session_state.distance_matrix = distance_matrix
+    
     dbscan = DBSCAN(eps=0.05, min_samples=1, metric="cosine")
     labels = dbscan.fit_predict(distance_matrix)
+
     clusters = defaultdict(list)
     old_names = defaultdict(list)
     for i, label in enumerate(labels):
         label_key = int(label) # convert numpy.int64 to int
         clusters[label_key].append(data[header_name].iloc[i])
         old_names[label_key].append(data[header_name].iloc[i])
+
     clusters = dict((k, [x.lower() for x in v]) for k,v in clusters.items())
     old_names = dict((k, [x.lower() for x in v]) for k,v in clusters.items())
     st.session_state.clusters = clusters
     st.session_state.old_names = old_names
     # st.write(clusters)
     return st.session_state.clusters, st.session_state.old_names
+
+def move_cluster(item_to_move, from_cluster_id, to_cluster_id):
+    
+    clusters = st.session_state.clusters
+
+    if item_to_move in clusters[int(from_cluster_id)]:
+        clusters[int(to_cluster_id)].append(item_to_move)
+        clusters[int(from_cluster_id)].remove(item_to_move)
+
+    st.session_state.clusters = clusters
+
+    for cluster_label, cluster_items in clusters.items():
+        st.write(f"Cluster {cluster_label}: {cluster_items}")
+
 def merge_clusters(cluster1_id, cluster2_id):
     
     clusters = st.session_state.clusters
@@ -326,15 +353,6 @@ def replace_cluster(edit_cluster, name_to_edit):
     for cluster_label, cluster_items in clusters.items():
         st.write(f"Cluster {cluster_label}: {cluster_items}")
 
-def move_cluster(item_to_move, from_cluster_id, to_cluster_id):
-    clusters = st.session_state.clusters
-    if item_to_move in clusters[int(from_cluster_id)]:
-        clusters[int(to_cluster_id)].append(item_to_move)
-        clusters[int(from_cluster_id)].remove(item_to_move)
-    st.session_state.clusters = clusters
-    for cluster_label, cluster_items in clusters.items():
-        st.write(f"Cluster {cluster_label}: {cluster_items}")
-
 def editing_cluster(clusters, old_names, data, header_name):
     
     clusters = st.session_state.clusters
@@ -369,9 +387,6 @@ def editing_cluster(clusters, old_names, data, header_name):
                     st.session_state.from_cluster_id = from_cluster_id
                     st.session_state.to_cluster_id = to_cluster_id
                     move_cluster(item_to_move, from_cluster_id, to_cluster_id) 
-                    
-                    # how to update the cluster?
-                    # I "modifed" st.session_state.clusters in every function?
             
             st.session_state["Move"] = not st.session_state["Move"]
 
@@ -459,7 +474,7 @@ def editing_cluster(clusters, old_names, data, header_name):
             data[header_name] = data[header_name].str.lower()
             for clusters_key, clusters_items in old_names.items():        
                 for item in clusters_items:
-                    data = data.replace(item, clusters[clusters_key][0])
+                    data = data.replace(item, clusters[clusters_key][0]) # remove int
             
             st.session_state.df = data
             st.write(data)
@@ -566,7 +581,6 @@ def search_replace(df):
     st.subheader("DataFrame after replacement:")
     st.write(st.session_state.df)
 
-
 def render_page_main():
     # Your page code here
     st.title("Automated and Manual Cleaning")
@@ -593,7 +607,6 @@ def render_page_main():
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
         st.session_state.df = df
-    
 
     
     if st.button("Continue with Default YAML"):
@@ -606,7 +619,6 @@ st.session_state.df = df
 st.session_state.reference_columns = reference_columns
 
 def render_first_page():
-    # Your page code here
     st.title("Automated and Manual Cleaning")
 
     if st.session_state.df is not None:
@@ -621,6 +633,7 @@ def render_first_page():
 
     if st.button("Apply automatic functions"):
         if st.session_state.df is not None:
+            clean_none(data)
             job_title(data)
             split_name(data)
             validate_names(data)
@@ -631,39 +644,46 @@ def render_first_page():
     return st.session_state.df
 
 def render_second_page():
-    st.title("Clustering Functions")
-    st.write("The purpose of this function is to group similar data in order the user can edit typo corrections without the need to provide a specific input.")
+
+    st.title("Clustering Function")
+    st.write("This function is designed to group related data, allowing users to effortlessly make typo corrections without requiring a specific input.")
     if st.session_state.df is not None:
-        st.write(st.session_state.df.columns) # fix the UI
-        header_name = st.text_input("Enter the Header Name:", key="header_name_input")
-        submit_button = st.button("Compute Clustering")
-        if submit_button:
-            st.session_state.header_name = header_name
-            clusters, old_names = perform_clustering(st.session_state.df, header_name)
-        clusters = st.session_state.clusters
-        old_names = st.session_state.old_names
-        # Display the clustering results
-        st.write("Current Clusters:")
-        for cluster_label, cluster_items in clusters.items():
-            st.write(f"Cluster {cluster_label}: {cluster_items}")
-    clean_data = editing_cluster(clusters, old_names, st.session_state.df, header_name)
-    st.session_state.df = clean_data
+        column_names = []
+        for i in range(len(st.session_state.df.columns)):
+            column_names.append(st.session_state.df.columns[i])
+        st.write("Here there is a list of valid Header Names:")
+        st.write(f"{column_names}")
+        # st.write(st.session_state.df.columns) # fix the UI
+        header_name = st.text_input("Enter the Column Name:", key="header_name_input")
+        if not header_name:
+            pass
+        elif header_name in st.session_state.df.columns:
+            submit_button = st.button("Compute Clustering")
+
+            if submit_button:
+                st.session_state.header_name = header_name
+                clusters, old_names = perform_clustering(st.session_state.df, header_name)
+
+            clusters = st.session_state.clusters
+            old_names = st.session_state.old_names
+
+            # Display the clustering results
+            st.write("Current Clusters:")
+            for cluster_label, cluster_items in clusters.items():
+                st.write(f"Cluster {cluster_label}: {cluster_items}")
+    
+            clean_data = editing_cluster(clusters, old_names, st.session_state.df, header_name)
+            st.session_state.df = clean_data
+        
+        else:
+            st.write("Please provide a valid Column Name")
+            
     return st.session_state.df # idk if it makes sense
 
 def render_third_page():
     
     st.title("Splitting Columns")
-
-    if st.session_state.df is not None:
-        column_to_split = st.text_input("Select the column you want to split:", key="column_to_split_input")
-        character = st.text_input("Select the character you want to split by:", key="character_input")
-        
-        splitting(st.session_state.df, column_to_split, character)
-    
-def render_third_page():
-    
-    st.title("Splitting Columns")
-
+    st.write("This function facilitates the division of particular columns according to their content. The application will prompt you to assign new names to the resulting columns based on the extracted words.")
     if st.session_state.df is not None:
         column_to_split = st.text_input("Select the column you want to split:", key="column_to_split_input")
         character = st.text_input("Select the character you want to split by:", key="character_input")
@@ -672,13 +692,12 @@ def render_third_page():
             pass
         else:
             splitting(st.session_state.df, column_to_split, character)
-
+    
 def render_fourth_page():
     st.title("Find and Replace Function")
 
     if st.session_state.df is not None:
         search_replace(st.session_state.df)
-
 
 #Based on page number render required contents
 def render_page(page_number):
