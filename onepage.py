@@ -163,9 +163,13 @@ def process_user_input_changes():
                 st.write(f"Mapping options for column {column_index}: '{selected_column}':")
                 for j, (match, score) in enumerate(matched_columns[selected_column]):
                     st.write(f"  {j}. Map to '{match}' (Score: {score})")
-                match_choice = st.text_input("Enter the number for the mapping, or 'skip' to keep as is:",
+                match_choice = st.text_input("Enter the number for the mapping, 'erase' to delete the column, or 'skip' to keep as is:",
                                              key=f"match_choice_{column_index}")
-                if match_choice.lower() != 'skip' and match_choice.isdigit():
+                if match_choice.lower() == 'erase':
+                    # Erase the selected column
+                    st.session_state.df.drop(columns=[selected_column], inplace=True)
+                    st.write(f"Column {column_index}: '{selected_column}' has been erased.")
+                elif match_choice.lower() != 'skip' and match_choice.isdigit():
                     match_index = int(match_choice)
                     if 0 <= match_index < len(matched_columns[selected_column]):
                         chosen_mapping = matched_columns[selected_column][match_index][0]
@@ -177,10 +181,10 @@ def process_user_input_changes():
                             st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
                             st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
-                        st.write("Invalid input. Please enter a valid number or 'skip'.")
+                        st.write("No changes have been made to the columns.")
                 else:
-                    st.write("Invalid input. Please enter a valid number or 'skip'.")
-
+                    st.write("Invalid input. Please enter a valid number, 'erase', or 'skip'.")
+                    
 def update_dataframe():
     if "Last Name" not in st.session_state.df.columns:
         st.session_state.df["Last Name"] = ""
