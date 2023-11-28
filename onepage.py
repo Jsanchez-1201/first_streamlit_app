@@ -157,6 +157,8 @@ def process_user_input_changes():
     if st.session_state.form_submitted and st.session_state.process_change_columns:
         change_columns_list = st.session_state.change_columns_list
         matched_columns = st.session_state.mapped_columns
+        columns_to_erase = []
+
         for column_index in change_columns_list:
             if 0 <= column_index < len(matched_columns):
                 selected_column = list(matched_columns.keys())[column_index]
@@ -166,9 +168,9 @@ def process_user_input_changes():
                 match_choice = st.text_input("Enter the number for the mapping, 'erase' to delete the column, or 'skip' to keep as is:",
                                              key=f"match_choice_{column_index}")
                 if match_choice.lower() == 'erase':
-                    # Erase the selected column
-                    st.session_state.df.drop(columns=[selected_column], inplace=True)
-                    st.write(f"Column {column_index}: '{selected_column}' has been erased.")
+                    # Add the selected column to the list for erasure
+                    columns_to_erase.append(selected_column)
+                    st.write(f"Column {column_index}: '{selected_column}' will be erased.")
                 elif match_choice.lower() != 'skip' and match_choice.isdigit():
                     match_index = int(match_choice)
                     if 0 <= match_index < len(matched_columns[selected_column]):
@@ -184,7 +186,10 @@ def process_user_input_changes():
                         st.write("No changes have been made to the columns.")
                 else:
                     st.write("Invalid input. Please enter a valid number, 'erase', or 'skip'.")
-                    
+
+        # Drop the columns selected for erasure
+        st.session_state.df.drop(columns=columns_to_erase, inplace=True)
+
 def update_dataframe():
     if "Last Name" not in st.session_state.df.columns:
         st.session_state.df["Last Name"] = ""
