@@ -136,22 +136,29 @@ def display_mapped_columns():
         mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
     st.text(mapped_columns_text)
 
+
 def process_user_input():
     with st.form(key='user_input_form'):
         st.subheader('Column Modification')
         change_columns_input = st.text_input("Enter a list of columns to modify (e.g., '0, 5, 7') or 'none' to skip:",
-                                            key="change_columns_input") # value=st.session_state.change_columns_input
+                                            key="change_columns_input")
         submit_button = st.form_submit_button("Submit")
-    
+
     if submit_button:
         st.session_state.form_submitted = True
-        # st.session_state.change_columns_input = change_columns_input
         if change_columns_input.lower() != 'none':
             change_columns_list = [int(col.strip()) for col in change_columns_input.split(',') if col.strip()]
-            st.session_state.change_columns_list = change_columns_list
-            st.session_state.process_change_columns = True
+            valid_columns = [col for col in change_columns_list if 0 <= col < len(st.session_state.mapped_columns)]
+            
+            if len(valid_columns) == len(change_columns_list):
+                st.session_state.change_columns_list = valid_columns
+                st.session_state.process_change_columns = True
+            else:
+                st.warning("Invalid column indices detected. Please enter valid indices within the range.")
+                st.session_state.process_change_columns = False
         else:
             st.session_state.process_change_columns = False
+
 
 def process_user_input_changes():
     if st.session_state.form_submitted and st.session_state.process_change_columns:
