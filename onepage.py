@@ -169,10 +169,15 @@ def process_user_input_changes():
                     match_index = int(match_choice)
                     if 0 <= match_index < len(matched_columns[selected_column]):
                         chosen_mapping = matched_columns[selected_column][match_index][0]
-                        st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
-                        st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
+
+                        # Check if the chosen mapping already exists as a column
+                        if chosen_mapping in st.session_state.df.columns:
+                            st.write(f"Column name '{chosen_mapping}' already exists. Please choose a different name.")
+                        else:
+                            st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
+                            st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
-                        st.write("No changes have been made to the columns.")
+                        st.write("Invalid input. Please enter a valid number or 'skip'.")
                 else:
                     st.write("Invalid input. Please enter a valid number or 'skip'.")
 
