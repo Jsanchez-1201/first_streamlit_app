@@ -215,17 +215,19 @@ def job_title(df):
     
 def split_name(df):
     try:
-        if df['Last Name'].isnull().values.any() == False:
-            df["First Name"] = df["First Name"].replace('[-| .,\/_]+',' ', regex = True)
-            new = df["First Name"].str.split(" ", n=1, expand = True)
-            df["First Name"] = new[0]
-            df["Last Name"] = new[1]
-            return df
+        if not df['Last Name'].isnull().any():
+            # Check if the "First Name" column contains the specified characters for splitting
+            if '[-| .,\/_]+' in df["First Name"].iloc[0]:
+                df[["First Name", "Last Name"]] = df["First Name"].str.split('[-| .,\/_]+', n=1, expand=True)
+            else:
+                st.write("The specified characters for splitting are not present in the 'First Name' column.")
         else:
             st.write("This database already has both Name and Last Name in different columns.")
     except:
-        st.write("Please ensure that the designated column is labeled 'First Name'. Kindly select the appropriate option prior to rerunning the process.")
+        st.write("An error occurred during the name splitting process.")
 
+    return df
+    
 def validate_names(data):
     try:
         lenght = data['First Name'].str.len()
