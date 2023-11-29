@@ -669,13 +669,13 @@ def render_first_page():
 
     if st.button("Apply automatic functions"):
         if st.session_state.df is not None:
+            data = filter_valid_entries(data)
             clean_none(data)
             job_title(data)
             split_name(data)
             validate_names(data)
             validate_emails(data)
             map_work_columns(data)
-            filter_valid_entries(data)
             st.session_state.df = data
         st.subheader("Updated data:")
         st.write(st.session_state.df)
