@@ -676,6 +676,7 @@ def render_first_page():
             validate_emails(data)
             map_work_columns(data)
             filter_valid_entries(data)
+            st.session_state.df = data
         st.subheader("Updated data:")
         st.write(st.session_state.df)
     return st.session_state.df
