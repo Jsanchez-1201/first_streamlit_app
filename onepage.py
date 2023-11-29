@@ -263,6 +263,30 @@ def clean_none(df):
     df.fillna('', inplace=True)
     return df
 
+def filter_valid_entries(df):
+    validation_columns = [col for col in df.columns if col.endswith('_validation')]
+    
+    if validation_columns:
+        # Create a mask for valid entries in all validation columns
+        valid_entries_mask = df[validation_columns].eq('Valid').all(axis=1)
+        # Calculate the percentage of rows that will be deleted
+        percent_deleted = 100 * (1 - valid_entries_mask.mean())
+        
+        # Filter rows with valid entries and return the new DataFrame
+        valid_entries_df = df[valid_entries_mask].copy()
+
+        # Display a warning message if more than 25% of the data was deleted
+        if percent_deleted > 25:
+            st.warning("More than 25% of the data was deleted.")
+        # Display a message if less than or equal to 25% of the data was deleted
+        else:
+            st.info("Less than or equal to 25% of the data was deleted.")
+
+        return valid_entries_df
+    else:
+        raise ValueError("No validation columns found in the DataFrame.")
+
+
 df = st.session_state.df
 reference_columns = st.session_state.reference_columns
 
@@ -651,6 +675,7 @@ def render_first_page():
             validate_names(data)
             validate_emails(data)
             map_work_columns(data)
+            filter_valid_entries(data)
         st.subheader("Updated data:")
         st.write(st.session_state.df)
     return st.session_state.df
