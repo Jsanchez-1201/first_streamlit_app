@@ -245,7 +245,7 @@ def validate_emails(df):
     pattern = '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}'
     # Iterate through the specified columns
     for column in email_columns:
-        column_name = f'{column} Validation'
+        column_name = f'{column}_validation'
         is_valid_pattern = df[column_name] = df[column].apply(lambda email: bool(re.match(pattern, email)))
         invalid_domains = ['gmail.com', 'hotmail.com']
         invalid_domains = ['gmail.com', 'hotmail.com']
