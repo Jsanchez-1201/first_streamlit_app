@@ -136,7 +136,6 @@ def display_mapped_columns():
         mapped_columns_text += f"{column_index}. '{column}' is initially mapped to '{mapping[0][0]}'\n"
     st.text(mapped_columns_text)
 
-
 def process_user_input():
     with st.form(key='user_input_form'):
         st.subheader('Column Modification')
@@ -159,7 +158,6 @@ def process_user_input():
         else:
             st.session_state.process_change_columns = False
 
-
 def process_user_input_changes():
     if st.session_state.form_submitted and st.session_state.process_change_columns:
         change_columns_list = st.session_state.change_columns_list
@@ -179,14 +177,14 @@ def process_user_input_changes():
 
                         # Check if the chosen mapping already exists as a column
                         if chosen_mapping in st.session_state.df.columns:
-                            st.write(f"Column name '{chosen_mapping}' already exists. Please choose a different name.")
+                            st.warning(f"Column name '{chosen_mapping}' already exists. Please choose a different name.")
                         else:
                             st.session_state.df.rename(columns={selected_column: chosen_mapping}, inplace=True)
-                            st.write(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
+                            st.success(f"Column {column_index}: '{selected_column}' has been mapped to '{chosen_mapping}'.")
                     else:
-                        st.write("No changes have been made to the columns.")
+                        st.warning("Invalid input. Please enter a valid number or 'skip'.")
                 else:
-                    st.write("Invalid input. Please enter a valid number or 'skip'.")
+                    st.warning("Invalid input. Please enter a valid number or 'skip'.")
 
 def update_dataframe():
     if "Last Name" not in st.session_state.df.columns:
@@ -196,8 +194,11 @@ def update_dataframe():
     updated_df["Last Name"] = st.session_state.df["Last Name"]  # Modify the copy
 
     st.subheader('Updated DataFrame:')
-    st.write(updated_df)
-
+    if updated_df.shape[0] == 0:
+        pass
+    else:
+        st.write(updated_df)
+    
     st.session_state.df = updated_df
     return updated_df
 
@@ -211,20 +212,21 @@ def job_title(df):
         df['Title_validation'][mask == False] = 'Invalid'
         return df
     except:
-        st.write("Please ensure that the designated column is labeled 'Title'. Kindly select the appropriate option prior to rerunning the process.")
+        st.warning("Please ensure that the designated column is labeled 'Title'. Kindly select the appropriate option prior to rerunning the process.")
+    
 def split_name(df):
-    try:
-        if not df['Last Name'].isnull().any():
-            if df['Last Name'].isnull().values.any() == False:
-                df["First Name"] = df["First Name"].replace('[-| .,\/_]+',' ', regex = True)
-                new = df["First Name"].str.split(" ", n=1, expand = True)
-                df["First Name"] = new[0]
-                df["Last Name"] = new[1]
-                return df
-            else:
-                st.write("This database already has both Name and Last Name in different columns.")
-    except:
-        st.write("Please ensure that the designated column is labeled 'First Name'. Kindly select the appropriate option prior to rerunning the process.")    
+
+    for row in df['Last Name']:
+        column_length = len(row)
+    if column_length == 0:
+        df["First Name"] = df["First Name"].replace('[-| .,\/_]+',' ', regex = True)
+        new = df["First Name"].str.split(" ", n=1, expand = True)
+        df["First Name"] = new[0]
+        df["Last Name"] = new[1]
+        return df
+    else:
+        st.success("This database already has both Name and Last Name in different columns.")
+
 def validate_names(data):
     try:
         lenght = data['First Name'].str.len()
@@ -234,7 +236,7 @@ def validate_names(data):
         data['Name_validation'][mask == False] = 'Invalid'
         return data
     except:
-        st.write("Please ensure that the designated column is labeled 'First Name'. Kindly select the appropriate option prior to rerunning the process.")
+        st.warning("Please ensure that the designated column is labeled 'First Name'. Kindly select the appropriate option prior to rerunning the process.")
     
 def validate_emails(df):
 
@@ -253,7 +255,6 @@ def validate_emails(df):
     # Display the modified DataFrame
     return df
 
-
 def map_work_columns(data):
     data.columns = data.columns.str.replace('Work ', '')
     return data
@@ -261,6 +262,9 @@ def map_work_columns(data):
 def clean_none(df):
     df.fillna('', inplace=True)
     return df
+
+df = st.session_state.df
+reference_columns = st.session_state.reference_columns
 
 def filter_valid_entries(df):
     validation_columns = [col for col in df.columns if col.endswith('_validation')]
@@ -285,9 +289,6 @@ def filter_valid_entries(df):
     else:
         raise ValueError("No validation columns found in the DataFrame.")
 
-
-df = st.session_state.df
-reference_columns = st.session_state.reference_columns
 
 # Functions related to clustering
 
@@ -327,13 +328,19 @@ def perform_clustering(data, header_name):
 def move_cluster(item_to_move, from_cluster_id, to_cluster_id):
     
     clusters = st.session_state.clusters
-
-    if item_to_move in clusters[int(from_cluster_id)]:
-        clusters[int(to_cluster_id)].append(item_to_move)
-        clusters[int(from_cluster_id)].remove(item_to_move)
+    if int(from_cluster_id) not in clusters.keys():
+        st.warning(f"The current cluster '{from_cluster_id}' you provide does not match with any current cluster.")
+    elif int(to_cluster_id) not in clusters.keys():
+        st.warning(f"The target cluster '{to_cluster_id}' you provide does not match with any current cluster.")
+    else:
+        if item_to_move in clusters[int(from_cluster_id)]:
+            clusters[int(to_cluster_id)].append(item_to_move)
+            clusters[int(from_cluster_id)].remove(item_to_move)
+            st.success(f"'{item_to_move}' has been moved to {to_cluster_id}")
+        else:
+            st.warning("The item you want to move does not exist in the specified cluster. Please provide a valid one.")
 
     st.session_state.clusters = clusters
-
     for cluster_label, cluster_items in clusters.items():
         st.write(f"Cluster {cluster_label}: {cluster_items}")
 
@@ -341,8 +348,14 @@ def merge_clusters(cluster1_id, cluster2_id):
     
     clusters = st.session_state.clusters
 
-    clusters[int(cluster1_id)] += clusters[int(cluster2_id)]
-    del clusters[int(cluster2_id)]
+    if int(cluster1_id) not in clusters.keys():
+        st.warning(f"The current cluster '{cluster1_id}' you provide does not match with any current cluster.")
+    elif int(cluster2_id) not in clusters.keys():
+        st.warning(f"The target cluster '{cluster2_id}' you provide does not match with any current cluster.")
+    else:
+        clusters[int([cluster1_id])] += clusters[int(cluster2_id)]
+        del clusters[int(cluster2_id)]
+        st.success(f"Merge has been successfully done.")
 
     st.session_state.clusters = clusters
 
@@ -357,9 +370,11 @@ def split_cluster(cluster_id, item_to_split):
         clusters[int(cluster_id)].remove(item_to_split)
         new_cluster_id = max(clusters.keys()) + 1
         clusters[new_cluster_id] = [item_to_split]
+        st.success(f"'{item_to_split}' has been successfully splitted")
+    else:
+        st.warning("The item you want to move does not exist in the specified cluster. Please provide a valid one.")
 
     st.session_state.clusters = clusters
-
     for cluster_label, cluster_items in clusters.items():
         st.write(f"Cluster {cluster_label}: {cluster_items}")
 
@@ -369,6 +384,7 @@ def create_cluster(new_item):
     
     new_cluster_id = max(clusters.keys()) + 1
     clusters[new_cluster_id] = [new_item]
+    st.success("The new cluster has been created.")
 
     st.session_state.clusters = clusters
 
@@ -378,10 +394,13 @@ def create_cluster(new_item):
 def replace_cluster(edit_cluster, name_to_edit):
     
     clusters = st.session_state.clusters
-
-    for item in clusters[int(edit_cluster)]:
-        if item != name_to_edit:
-          clusters[int(edit_cluster)][clusters[int(edit_cluster)].index(item)] = name_to_edit
+    if int(edit_cluster) not in clusters.keys():
+        st.warning(f"'{edit_cluster}' does not exist in any of the current clusters.")
+    else:
+        for item in clusters[int(edit_cluster)]:
+            if item != name_to_edit:
+                clusters[int(edit_cluster)][clusters[int(edit_cluster)].index(item)] = name_to_edit
+        st.success("The information has been edited.")
     
     st.session_state.clusters = clusters
 
@@ -510,7 +529,7 @@ def editing_cluster(clusters, old_names, data, header_name):
             for clusters_key, clusters_items in old_names.items():        
                 for item in clusters_items:
                     data = data.replace(item, clusters[clusters_key][0]) # remove int
-            
+            st.success("Changes successfully saved.")
             st.session_state.df = data
             st.write(data)
 
@@ -524,10 +543,18 @@ def splitting(df, column_to_split, character):
     else:
         splits = df[column_to_split].tolist()
         size = 0
+        character_in_word = False
+
         for name in splits:
-            names = name.split(character)
-            if len(names) > size:
-                size = len(names)
+            if character in name:
+                names = name.split(character)
+                if len(names) > size:
+                    size = len(names)
+                character_in_word = True
+        if not character_in_word:
+            st.warning(f"The '{character}' character does not exist in the selected column. Please make sure you are providing a valid one to continue with the process.")
+            return
+
         st.write(f'You have to enter {size} name(s) for the new column(s)')
         
         if st.button("Create column(s)"):
@@ -548,6 +575,7 @@ def splitting(df, column_to_split, character):
                     st.session_state.column_names = column_names
                     
                     df[df_column] = df[column_to_split].str.split(character, expand=True)
+                    st.success(f"The column '{column_to_split}' has been successfully splitted.")
             
             st.session_state["Split into Columns"] = not st.session_state["Split into Columns"]
         
@@ -594,7 +622,7 @@ def search_replace(df):
                         st.error(f"Value '{st.session_state.find_value}' not found in column '{st.session_state.column_name}'. Please enter a valid value.")
                     else:
                         st.session_state.df[st.session_state.column_name].replace(st.session_state.find_value, st.session_state.replace_value, inplace=True)
-                        st.write(f"Value replaced in {st.session_state.column_name}")
+                        st.success(f"Value replaced in {st.session_state.column_name}")
         elif st.session_state.column_name not in st.session_state.df.columns or st.session_state.column_name in [' ', '']:
             st.warning(f"Column '{st.session_state.column_name}' not found in DataFrame. Please enter a valid column name.")
     elif st.session_state.choice == 'Whole DataFrame':
@@ -617,14 +645,14 @@ def search_replace(df):
     st.write(st.session_state.df)
 
 def render_page_main():
-    # Your page code here
+
     st.title("Automated and Manual Cleaning")
     uploaded_file = st.file_uploader("Upload Excel or CSV File", type=["xlsx", "csv"], key="file_uploader")
     reference_file = st.file_uploader("Upload YAML file with reference columns (optional)", type=["yml", "yaml"], key="yaml_uploader")
 
-    with open('standard_columns.yml', 'r') as default_yaml:
+    with open('config/standard_columns.yml', 'r') as default_yaml:
         default_reference_columns = yaml.safe_load(default_yaml)
-    
+    df = pd.DataFrame() # chan
     if uploaded_file is not None:
         file_extension = uploaded_file.name.split(".")[-1].lower()
         
@@ -634,21 +662,24 @@ def render_page_main():
             df = pd.read_csv(uploaded_file) # Read CSV file
         else:
             st.error(f"Unsupported file type: {file_extension}. Please upload an Excel (xlsx/xls) or CSV file.")
-
+    
     if reference_file is not None:
         with reference_file as file:
             try:
-                st.session_state.reference_columns = yaml.safe_load(file) # fix the error with the variable
+                st.session_state.reference_columns = yaml.safe_load(file)
             except Exception as e:
                 st.error(f"Error loading reference columns: {str(e)}")
         st.session_state.df = df
-
-    
-    if st.button("Continue with Default YAML"):
+    else:
+        # if st.button("Continue with Default YAML"):
         st.session_state.df = df
         st.session_state.reference_columns = default_reference_columns
+  
     st.subheader("Data preview:")
-    st.write(st.session_state.df)
+    if st.session_state.df.shape[0] == 0:
+        pass
+    else:
+        st.write(st.session_state.df)
 
 st.session_state.df = df
 st.session_state.reference_columns = reference_columns
@@ -683,7 +714,7 @@ def render_first_page():
 def render_second_page():
 
     st.title("Clustering Function")
-    st.write("This function is designed to group related data, allowing users to effortlessly make typo corrections without requiring a specific input.")
+    st.info("This function is designed to group related data, allowing users to effortlessly make typo corrections without requiring a specific input.")
     if st.session_state.df is not None:
         column_names = []
         for i in range(len(st.session_state.df.columns)):
@@ -713,16 +744,22 @@ def render_second_page():
             st.session_state.df = clean_data
         
         else:
-            st.write("Please provide a valid Column Name")
+            st.warning("Please provide a valid Column Name")
             
     return st.session_state.df # idk if it makes sense
 
 def render_third_page():
     
     st.title("Splitting Columns")
-    st.write("This function facilitates the division of particular columns according to their content. The application will prompt you to assign new names to the resulting columns based on the extracted words.")
+    st.info("This function facilitates the division of particular columns according to their content. The application will prompt you to assign new names to the resulting columns based on the extracted words.")
     if st.session_state.df is not None:
         column_to_split = st.text_input("Select the column you want to split:", key="column_to_split_input")
+        if not column_to_split:
+            pass
+        elif column_to_split not in st.session_state.df.columns:
+            st.warning("Column not found. Please be sure to write the correct name of the header.")
+            return
+        
         character = st.text_input("Select the character you want to split by:", key="character_input")
         
         if not character:
